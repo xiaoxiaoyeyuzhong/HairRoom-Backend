@@ -3,6 +3,7 @@ package com.fdt.management.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.management.common.ErrorCode;
+import com.fdt.management.constant.UserConstant;
 import com.fdt.management.exception.BusinessException;
 import com.fdt.management.mapper.UserMapper;
 import com.fdt.management.model.entity.User;
@@ -15,7 +16,7 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.fdt.management.constant.UserConstant.ADMIN_ROLE;
+import static com.fdt.management.constant.UserConstant.MANAGER_ROLE;
 import static com.fdt.management.constant.UserConstant.USER_LOGIN_STATE;
 
 
@@ -67,7 +68,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            // 为用户添加默认权限——员工
+            user.setUserRole(UserConstant.STAFF_ROLE);
+
             boolean saveResult = this.save(user);
+
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
@@ -138,7 +143,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 仅管理员可查询
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User user = (User) userObj;
-        return user != null && ADMIN_ROLE.equals(user.getUserRole());
+        return user != null && MANAGER_ROLE.equals(user.getUserRole());
     }
 
     /**

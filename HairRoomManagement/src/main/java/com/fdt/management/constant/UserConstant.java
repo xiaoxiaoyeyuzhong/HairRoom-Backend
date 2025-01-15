@@ -27,12 +27,12 @@ public interface UserConstant {
     /**
      * 员工权限
      */
-    String STAFF_ROLE = "staff";
+    String STAFF_ROLE = "Staff";
 
     /**
      * 管理员权限
      */
-    String ADMIN_ROLE = "Manager";
+    String MANAGER_ROLE = "Manager";
 
     // endregion
 }
