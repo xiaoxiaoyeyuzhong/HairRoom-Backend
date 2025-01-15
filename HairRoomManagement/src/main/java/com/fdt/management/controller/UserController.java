@@ -3,6 +3,8 @@ package com.fdt.management.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import com.fdt.management.annotation.AuthCheck;
+import com.fdt.management.constant.UserConstant;
 import com.fdt.management.exception.BusinessException;
 import com.fdt.management.model.dto.user.*;
 import com.fdt.management.model.vo.UserVO;
@@ -14,10 +16,18 @@ import com.fdt.management.model.entity.User;
 import com.fdt.management.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +42,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    private static final String UPLOAD_DIR = "./src/main/resources/images";  // 设置上传文件存储路径
 
     // region 登录相关
 
@@ -126,6 +138,8 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
+        // todo 让用户输入密码
+        user.setUserPassword("12345678");
         boolean result = userService.save(user);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
@@ -141,6 +155,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/delete")
+    @AuthCheck(mustRole = UserConstant.MANAGER_ROLE)
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -152,6 +167,7 @@ public class UserController {
     /**
      * 更新用户
      *
+     * todo 区分用户和管理员更新使用的方法和参数(dto)
      * @param userUpdateRequest
      * @param request
      * @return
@@ -192,8 +208,8 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/list")
-    public BaseResponse<List<UserVO>> listUser(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    @PostMapping("/list")
+    public BaseResponse<List<UserVO>> listUser(@RequestBody UserQueryRequest userQueryRequest, HttpServletRequest request) {
         User userQuery = new User();
         if (userQueryRequest != null) {
             BeanUtils.copyProperties(userQueryRequest, userQuery);
@@ -215,8 +231,8 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/list/page")
-    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+    @PostMapping("/list/page")
+    public BaseResponse<Page<UserVO>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest, HttpServletRequest request) {
         long current = 1;
         long size = 10;
         User userQuery = new User();
@@ -237,5 +253,41 @@ public class UserController {
         return ResultUtils.success(userVOPage);
     }
 
+    @PostMapping("avatarUpload")
+    public BaseResponse<String> avatarUpload(@RequestPart("userAvatar") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "文件为空");
+        }
+
+        // 获取文件原始名称
+        String fileName = file.getOriginalFilename();
+        // 创建文件保存路径
+        Path path = Paths.get(UPLOAD_DIR, fileName);
+        // 创建文件保存目录
+        File dir = new File(UPLOAD_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        // 保存文件
+//      Files.copy(file.getInputStream(), path);
+        // todo 加入云存储，返回文件的访问路径或文件URL
+//        String fileUrl = "http://localhost:8080/api/testsmall.png";
+//        String fileUrl = "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png";
+//        String fileUrl = "http://hair-room.oss-cn-guangzhou.aliyuncs.com/testsmall.png";
+        // 七牛云存储
+        String fileUrl = "http://spsxkrb2m.hn-bkt.clouddn.com/testsmall.png";
+        return ResultUtils.success(fileUrl);
+//        return ResultUtils.success(file);
+    }
+
+    @GetMapping("get/avatar")
+    @AuthCheck(mustRole = UserConstant.MANAGER_ROLE)
+    public BaseResponse<String> getAvatar(String avatarUrl) {
+
+        return ResultUtils.success(avatarUrl);
+    }
+
     // endregion
+
+
 }
