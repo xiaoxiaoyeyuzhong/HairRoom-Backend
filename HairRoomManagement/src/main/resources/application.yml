@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    # file upload
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   application:
     name: springboot-init
   # DataSource Config
@@ -22,7 +27,7 @@ spring:
     password: 12345678
 
 server:
-  port: 7529
+  port: 8080
   servlet:
     context-path: /api
 mybatis-plus:
