@@ -2,7 +2,7 @@ package com.fdt.management.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fdt.management.model.entity.User;
+import com.fdt.common.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

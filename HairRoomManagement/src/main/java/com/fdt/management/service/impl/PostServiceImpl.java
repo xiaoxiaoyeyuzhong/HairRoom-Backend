@@ -1,12 +1,12 @@
 package com.fdt.management.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fdt.management.common.ErrorCode;
+import com.fdt.common.api.ErrorCode;
 import com.fdt.management.exception.BusinessException;
 import com.fdt.management.mapper.PostMapper;
-import com.fdt.management.model.entity.Post;
-import com.fdt.management.model.enums.PostGenderEnum;
-import com.fdt.management.model.enums.PostReviewStatusEnum;
+import com.fdt.common.model.entity.Post;
+import com.fdt.common.model.enums.PostGenderEnum;
+import com.fdt.common.model.enums.PostReviewStatusEnum;
 import com.fdt.management.service.PostService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

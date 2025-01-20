@@ -5,7 +5,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   application:
-    name: springboot-init
+    name: springboot-management
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

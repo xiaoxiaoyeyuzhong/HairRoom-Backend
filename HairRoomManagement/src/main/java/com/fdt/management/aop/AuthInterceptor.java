@@ -2,9 +2,9 @@ package com.fdt.management.aop;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fdt.management.annotation.AuthCheck;
-import com.fdt.management.common.ErrorCode;
+import com.fdt.common.api.ErrorCode;
 import com.fdt.management.exception.BusinessException;
-import com.fdt.management.model.entity.User;
+import com.fdt.common.model.entity.User;
 import com.fdt.management.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;

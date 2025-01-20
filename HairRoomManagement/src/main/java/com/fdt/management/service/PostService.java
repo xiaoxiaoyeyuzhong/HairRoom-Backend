@@ -1,7 +1,7 @@
 package com.fdt.management.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fdt.management.model.entity.Post;
+import com.fdt.common.model.entity.Post;
 
 /**
  * @author yupili

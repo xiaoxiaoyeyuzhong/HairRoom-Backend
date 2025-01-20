@@ -1,6 +1,6 @@
 package com.fdt.management.mapper;
 
-import com.fdt.management.model.entity.Staff;
+import com.fdt.common.model.entity.Staff;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

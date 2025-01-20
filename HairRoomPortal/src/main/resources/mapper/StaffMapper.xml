@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fdt.portal.mapper.StaffMapper">
+
+    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Staff">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="staffName" column="staffName" jdbcType="VARCHAR"/>
+            <result property="staffSex" column="staffSex" jdbcType="VARCHAR"/>
+            <result property="staffAge" column="staffAge" jdbcType="BIGINT"/>
+            <result property="staffPhone" column="staffPhone" jdbcType="VARCHAR"/>
+            <result property="staffEmail" column="staffEmail" jdbcType="VARCHAR"/>
+            <result property="userId" column="userId" jdbcType="BIGINT"/>
+            <result property="storeId" column="storeId" jdbcType="BIGINT"/>
+            <result property="isStoreManager" column="isStoreManager" jdbcType="TINYINT"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,staffName,staffSex,
+        staffAge,staffPhone,staffEmail,
+        userId,storeId,isStoreManager,
+        createTime,updateTime,isDelete
+    </sql>
+</mapper>
