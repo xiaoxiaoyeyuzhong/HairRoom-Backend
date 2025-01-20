@@ -1,6 +1,6 @@
 package com.fdt.management.exception;
 
-import com.fdt.management.common.ErrorCode;
+import com.fdt.common.api.ErrorCode;
 
 /**
  * 自定义异常类

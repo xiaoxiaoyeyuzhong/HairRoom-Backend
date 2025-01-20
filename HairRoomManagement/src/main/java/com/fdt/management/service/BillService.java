@@ -1,9 +1,9 @@
 package com.fdt.management.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fdt.management.model.dto.bill.BillAddRequest;
-import com.fdt.management.model.dto.bill.BillQueryRequest;
-import com.fdt.management.model.entity.Bill;
+import com.fdt.common.model.dto.bill.BillAddRequest;
+import com.fdt.common.model.dto.bill.BillQueryRequest;
+import com.fdt.common.model.entity.Bill;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;

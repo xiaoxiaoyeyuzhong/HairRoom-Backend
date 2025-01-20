@@ -9,7 +9,7 @@
         <version>2.7.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.fdt</groupId>
+    <groupId>com.fdt.management</groupId>
     <artifactId>HairRoomManagement</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>HairRoomManagement</name>
@@ -95,6 +95,13 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.fdt.common</groupId>
+            <artifactId>HairRoomCommon</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>

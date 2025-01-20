@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fdt.management.mapper.StaffMapper">
 
-    <resultMap id="BaseResultMap" type="com.fdt.management.model.entity.Staff">
+    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Staff">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="staffName" column="staffName" jdbcType="VARCHAR"/>
             <result property="staffSex" column="staffSex" jdbcType="VARCHAR"/>

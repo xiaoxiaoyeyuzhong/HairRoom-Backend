@@ -1,8 +1,8 @@
 package com.fdt.management.exception;
 
-import com.fdt.management.common.BaseResponse;
-import com.fdt.management.common.ErrorCode;
-import com.fdt.management.common.ResultUtils;
+import com.fdt.common.api.BaseResponse;
+import com.fdt.common.api.ErrorCode;
+import com.fdt.common.api.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

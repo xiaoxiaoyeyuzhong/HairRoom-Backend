@@ -1,6 +1,6 @@
 package com.fdt.management.mapper;
 
-import com.fdt.management.model.entity.User;
+import com.fdt.common.model.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

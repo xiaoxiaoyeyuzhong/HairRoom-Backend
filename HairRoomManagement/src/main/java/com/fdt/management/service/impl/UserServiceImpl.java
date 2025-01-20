@@ -2,11 +2,11 @@ package com.fdt.management.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fdt.management.common.ErrorCode;
-import com.fdt.management.constant.UserConstant;
+import com.fdt.common.api.ErrorCode;
+import com.fdt.common.constant.UserConstant;
 import com.fdt.management.exception.BusinessException;
 import com.fdt.management.mapper.UserMapper;
-import com.fdt.management.model.entity.User;
+import com.fdt.common.model.entity.User;
 import com.fdt.management.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +16,8 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.fdt.management.constant.UserConstant.MANAGER_ROLE;
-import static com.fdt.management.constant.UserConstant.USER_LOGIN_STATE;
+import static com.fdt.common.constant.UserConstant.MANAGER_ROLE;
+import static com.fdt.common.constant.UserConstant.USER_LOGIN_STATE;
 
 
 /**

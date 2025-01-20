@@ -1,7 +1,10 @@
 package com.fdt.management.service;
 
-import com.fdt.management.model.entity.Staff;
+import com.fdt.common.model.dto.staff.StaffAddRequest;
+import com.fdt.common.model.entity.Staff;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author 冯德田
@@ -10,4 +13,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface StaffService extends IService<Staff> {
 
+    /**
+     * 添加员工
+     * @param staffAddRequest
+     * @return 添加的员工id
+     */
+    Long addStaff(StaffAddRequest staffAddRequest);
+
+    Staff getStaffById(int id, HttpServletRequest request);
 }
