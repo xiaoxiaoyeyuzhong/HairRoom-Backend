@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fdt.portal.mapper.ScheduleMapper">
+
+    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Schedule">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="staffId" column="staffId" jdbcType="BIGINT"/>
+        <result property="storeId" column="storeId" jdbcType="BIGINT"/>
+        <result property="weekDay" column="weekDay" jdbcType="INTEGER"/>
+        <result property="timeSlot" column="timeSlot" jdbcType="INTEGER"/>
+        <result property="haveAppointedSlots" column="haveAppointedSlots" jdbcType="INTEGER"/>
+        <result property="appointSlots" column="appointSlots" jdbcType="INTEGER"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,staffId,storeId,
+        scheduleList,haveAppointedSlots,appointSlots,
+        createTime,updateTime,isDelete
+    </sql>
+</mapper>
