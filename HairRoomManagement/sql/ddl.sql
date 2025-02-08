@@ -83,10 +83,10 @@ create table if not exists staff
 create table if not exists business_situation
 (
     id             bigint auto_increment comment 'id' primary key,
-    storeId        bigint         not null comment '门店id',
-    businessAmount decimal(10, 2) not null comment '营业额',
-    businessCost   decimal(10, 2) not null comment '成本',
-    businessProfit decimal(10, 2) not null comment '利润',
+    storeId        bigint                             not null comment '门店id',
+    businessAmount decimal(10, 2)                     not null comment '营业额',
+    businessCost   decimal(10, 2)                     not null comment '成本',
+    businessProfit decimal(10, 2)                     not null comment '利润',
     createTime     datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime     datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete       tinyint  default 0                 not null comment '是否删除'
@@ -127,29 +127,29 @@ create table if not exists staff_evaluation
 -- 预约表
 create table if not exists appointment
 (
-    id            bigint auto_increment comment 'id' primary key,
-    customerId    bigint                             not null comment '客户id',
-    staffId       bigint                             not null comment '员工id',
-    appointmentTimeStart datetime default CURRENT_TIMESTAMP not null comment '预约时间开始',
-    appointmentTimeEnd datetime default CURRENT_TIMESTAMP not null comment '预约时间结束',
-    createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    id              bigint auto_increment comment 'id' primary key,
+    customerId      bigint                             not null comment '客户id',
+    staffId         bigint                             not null comment '员工id',
+    appointmentTime datetime default CURRENT_TIMESTAMP not null comment '预约日期',
+    timeSlot        int                                not null comment '预约时间段',
+    createTime      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete        tinyint  default 0                 not null comment '是否删除'
 ) comment '预约';
 
 -- 排班表
 create table if not exists schedule
 (
-    id            bigint auto_increment comment 'id' primary key,
-    staffId       bigint                             not null comment '员工id',
-    storeId       bigint                             not null comment '门店id',
-    weekDay       varchar(256)                        not null comment '星期几',
-    timeSlot      varchar(256)                        not null comment '时间段',
+    id                 bigint auto_increment comment 'id' primary key,
+    staffId            bigint                             not null comment '员工id',
+    storeId            bigint                             not null comment '门店id',
+    weekDay            varchar(256)                       not null comment '星期几',
+    timeSlot           varchar(256)                       not null comment '时间段',
     haveAppointedSlots int                                not null comment '已预约数',
-    appointSlots int                                not null comment '可预约数',
-    createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete        tinyint  default 0                 not null comment '是否删除'
+    appointSlots       int                                not null comment '可预约数',
+    createTime         datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime         datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete           tinyint  default 0                 not null comment '是否删除'
 ) comment '排班';
 
 # -- 帖子表
