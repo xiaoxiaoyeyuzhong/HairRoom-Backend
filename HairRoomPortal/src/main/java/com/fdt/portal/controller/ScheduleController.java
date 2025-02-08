@@ -4,7 +4,6 @@ import com.fdt.common.api.BaseResponse;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.api.ResultUtils;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
-import com.fdt.common.model.entity.Schedule;
 import com.fdt.common.model.vo.ScheduleVO;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.service.ScheduleService;

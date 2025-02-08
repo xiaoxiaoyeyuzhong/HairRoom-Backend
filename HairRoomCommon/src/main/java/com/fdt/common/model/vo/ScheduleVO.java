@@ -6,6 +6,11 @@ import lombok.Data;
 public class ScheduleVO {
 
     /**
+     * 门店id
+     */
+    private Long storeId;
+
+    /**
      * 员工id
      */
     private Long staffId;

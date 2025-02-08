@@ -33,14 +33,14 @@ public class Appointment implements Serializable {
     private Long staffId;
 
     /**
-     * 预约时间开始
+     * 预约日期
      */
-    private Date appointmentTimeStart;
+    private Date appointmentTime;
 
     /**
-     * 预约时间结束
+     * 预约时间段
      */
-    private Date appointmentTimeEnd;
+    private Integer timeSlot;
 
     /**
      * 创建时间
