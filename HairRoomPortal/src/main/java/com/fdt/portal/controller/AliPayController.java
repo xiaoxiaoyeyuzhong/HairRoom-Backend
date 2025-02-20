@@ -37,17 +37,25 @@ public class AliPayController {
     @GetMapping("/pay")
     public void pay(AliPay aliPay, HttpServletResponse httpServletResponse) throws Exception{
 
+        log.info("===支付宝支付接口调用开始===");
+
         AlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL, aliPayConfig.getAppId(),
                 aliPayConfig.getAppPrivateKey(), FORMAT, CHARSET, aliPayConfig.getAlipayPublicKey(), SIGN_TYPE);
 
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        // 设置notifyUrl和returnUrl，即回调的地址和返回的地址
+        request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        request.setReturnUrl(aliPayConfig.getReturnUrl());
+
+        // 关于product_code，PC：FAST_INSTANT_TRADE_PAY 手机浏览器：MOBILE_WAP_PAY
         request.setBizContent("{" +
                 "\"out_trade_no\":\"" + aliPay.getBillId() + "\","
                 + "\"subject\":\"" + aliPay.getBillName() + "\","
                 + "\"total_amount\":\"" + aliPay.getBillAmount() + "\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\""
                 + "}");
         // 跳转到指定页面
-        request.setReturnUrl("");
+//        request.setReturnUrl("");
 
         String form = "";
         try{
@@ -66,8 +74,9 @@ public class AliPayController {
     // 注意接口类型，是post
     @PostMapping("/notify")
     public String payNotify(HttpServletRequest request) throws Exception{
-        if(request.getParameter("trade_status").equals("TRADE_SUCCESS")){
-            log.info("===支付宝异步回调===");
+        log.info("===支付宝异步回调===");
+        if("TRADE_SUCCESS".equals(request.getParameter("trade_status"))){
+
             Map<String,String> params = new HashMap<>();
             Map<String,String[]> requestParams = request.getParameterMap();
             for(String name : requestParams.keySet()){
