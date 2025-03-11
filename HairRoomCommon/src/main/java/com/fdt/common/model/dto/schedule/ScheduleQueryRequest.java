@@ -14,4 +14,9 @@ public class ScheduleQueryRequest {
      * 星期几
      */
     private Integer weekDay;
+
+    /**
+     * 时间段
+     */
+    private Integer timeSlot;
 }

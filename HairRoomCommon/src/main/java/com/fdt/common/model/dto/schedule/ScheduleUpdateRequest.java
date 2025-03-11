@@ -1,24 +1,21 @@
-package com.fdt.common.model.vo;
+package com.fdt.common.model.dto.schedule;
 
-import lombok.Data;
-
-@Data
-public class ScheduleVO {
+public class ScheduleUpdateRequest {
 
     /**
-     * 排班id
+     * id
      */
     private Long id;
-
-    /**
-     * 门店id
-     */
-    private Long storeId;
 
     /**
      * 员工id
      */
     private Long staffId;
+
+    /**
+     * 门店id
+     */
+    private Long storeId;
 
     /**
      * 星期几
@@ -39,4 +36,6 @@ public class ScheduleVO {
      * 可预约数
      */
     private Integer appointSlots;
+
+
 }

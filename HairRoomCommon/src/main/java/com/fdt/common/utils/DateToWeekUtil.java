@@ -1,56 +1,15 @@
-package com.fdt.portal.controller;
+package com.fdt.common.utils;
 
-import com.fdt.common.api.BaseResponse;
-import com.fdt.common.api.ErrorCode;
 import com.fdt.common.api.ResultUtils;
-import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
-import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
-import com.fdt.common.model.vo.ScheduleVO;
-import com.fdt.portal.exception.BusinessException;
-import com.fdt.portal.service.AppointmentService;
-import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Date;
 
-@RestController
-@RequestMapping("/appointment")
-public class AppointmentController {
+public class DateToWeekUtil {
 
-    @Resource
-    private AppointmentService appointmentService;
-
-    /**
-     * 用户查看某天可以预约的员工信息(有排班的员工)
-     * @param appointmentQueryRequest
-     * @return
-     */
-    @PostMapping("/can/day")
-    public BaseResponse<List<ScheduleVO>> canAppointmentByDay(@RequestBody AppointmentQueryRequest appointmentQueryRequest) {
-
-        if (appointmentQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        List<ScheduleVO> scheduleVOList = appointmentService.canAppointmentByDay(appointmentQueryRequest);
-
-        return ResultUtils.success(scheduleVOList);
-    }
-
-    @PostMapping("/add")
-    public BaseResponse<Long> addAppointment(@RequestBody AppointmentAddRequest appointmentAddRequest) {
-        if (appointmentAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        Long appointmentId = appointmentService.addAppointment(appointmentAddRequest);
-        return ResultUtils.success(appointmentId);
-    }
-
-    @GetMapping("/test")
-    public BaseResponse<String> test(String date) {
-
+    public static String getWeek(String date) {
         // todo 只允许预约包括当前日期的7天
 
         // 按照 . 切分字符串
@@ -109,7 +68,6 @@ public class AppointmentController {
 
         int dayOfWeekValue = dayOfWeek.getValue();
 
-        return ResultUtils.success(String.valueOf(dayOfWeekValue));
-
+        return String.valueOf(dayOfWeekValue);
     }
 }

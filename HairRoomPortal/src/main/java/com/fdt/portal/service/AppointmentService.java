@@ -1,5 +1,6 @@
 package com.fdt.portal.service;
 
+import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
 import com.fdt.common.model.entity.Appointment;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -20,4 +21,11 @@ public interface AppointmentService extends IService<Appointment> {
      * @return List<ScheduleVO> 可预约的员工排班信息
      */
     List<ScheduleVO> canAppointmentByDay(AppointmentQueryRequest appointmentQueryRequest);
+
+    /**
+     * 用户预约
+     * @param appointmentAddRequest 预约添加请求体
+     * @return
+     */
+    Long addAppointment(AppointmentAddRequest appointmentAddRequest);
 }
