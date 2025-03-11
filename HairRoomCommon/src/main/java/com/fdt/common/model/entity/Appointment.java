@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -35,7 +36,7 @@ public class Appointment implements Serializable {
     /**
      * 预约日期
      */
-    private Date appointmentTime;
+    private LocalDate appointmentTime;
 
     /**
      * 预约时间段
