@@ -1,7 +1,10 @@
 package com.fdt.common.model.dto.Appointment;
 
+import lombok.Data;
+
 import java.time.LocalDate;
 
+@Data
 public class AppointmentAddRequest {
 
     /**
@@ -17,7 +20,7 @@ public class AppointmentAddRequest {
     /**
      * 预约日期
      */
-    private LocalDate appointmentTime;
+    private String appointmentTime;
 
     /**
      * 预约时间段
