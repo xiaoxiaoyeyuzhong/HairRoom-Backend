@@ -9,9 +9,8 @@ import java.util.Date;
 
 public class DateToWeekUtil {
 
-    public static String getWeek(String date) {
-        // todo 只允许预约包括当前日期的7天
-
+    // 根据字符串日期获取时间类型日期
+    public static LocalDate getDate(String date) {
         // 按照 . 切分字符串
         String[] parts = date.split("\\.");
 
@@ -63,6 +62,11 @@ public class DateToWeekUtil {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.M.d");
 
         LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+        return localDate;
+    }
+
+    public static String getWeek(LocalDate localDate) {
+        // todo 只允许预约包括当前日期的7天
 
         DayOfWeek dayOfWeek = localDate.getDayOfWeek();
 

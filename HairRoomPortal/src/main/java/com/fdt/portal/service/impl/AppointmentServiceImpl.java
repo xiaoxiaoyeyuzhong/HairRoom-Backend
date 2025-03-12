@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,8 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
     public List<ScheduleVO> canAppointmentByDay(AppointmentQueryRequest appointmentQueryRequest) {
 
         // 将日期类型转换成数字类型的星期几
-        String week = DateToWeekUtil.getWeek(appointmentQueryRequest.getAppointmentTime());
+        LocalDate appointmentDate = DateToWeekUtil.getDate(appointmentQueryRequest.getAppointmentTime());
+        String week = DateToWeekUtil.getWeek(appointmentDate);
 
         // 对应查询星期几有什么员工排班
         ScheduleQueryRequest scheduleQueryRequest = new ScheduleQueryRequest();
@@ -57,6 +59,10 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
     public Long addAppointment(AppointmentAddRequest appointmentAddRequest) {
         Appointment appointment = new Appointment();
         BeanUtils.copyProperties(appointmentAddRequest, appointment);
+        // 前端传递的是一个字符串类型的时间，要保存到数据库及后续操作，我们要转换为日期类型
+        LocalDate appointmentDate = DateToWeekUtil.getDate(appointmentAddRequest.getAppointmentTime());
+        appointment.setAppointmentTime(appointmentDate);
+
         // 验证客户是否存在,注意验证角色
         User customer = userService.getById(appointment.getCustomerId());
         if (customer == null || !UserConstant.DEFAULT_ROLE.equals(customer.getUserRole())){
