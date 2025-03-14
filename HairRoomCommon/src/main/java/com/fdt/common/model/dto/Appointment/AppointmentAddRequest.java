@@ -10,7 +10,7 @@ public class AppointmentAddRequest {
     /**
      * 客户id
      */
-    private Long customerId;
+    private Long customerUserId;
 
     /**
      * 员工id

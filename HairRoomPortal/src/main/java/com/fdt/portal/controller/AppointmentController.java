@@ -3,9 +3,13 @@ package com.fdt.portal.controller;
 import com.fdt.common.api.BaseResponse;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.api.ResultUtils;
+import com.fdt.common.constant.UserConstant;
 import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
+import com.fdt.common.model.entity.User;
+import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
+import com.fdt.portal.annotation.AuthCheck;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.service.AppointmentService;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +44,22 @@ public class AppointmentController {
     }
 
     @PostMapping("/add")
+    @AuthCheck(anyRole = {UserConstant.DEFAULT_ROLE,UserConstant.STAFF_ROLE,UserConstant.MANAGER_ROLE})
     public BaseResponse<Long> addAppointment(@RequestBody AppointmentAddRequest appointmentAddRequest) {
         if (appointmentAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long appointmentId = appointmentService.addAppointment(appointmentAddRequest);
         return ResultUtils.success(appointmentId);
+    }
+
+    @GetMapping("/listByUserId")
+    public BaseResponse<List<AppointmentVO>> listAppointmentByUserId(Long userId){
+        if (userId ==null || userId == 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<AppointmentVO> appointmentVOList = appointmentService.listAppointmentByUserId(userId);
+        return ResultUtils.success(appointmentVOList);
     }
 
     @GetMapping("/test")

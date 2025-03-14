@@ -6,6 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Bill">
             <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tradeNo" column="tradeNo" jdbcType="VARCHAR"/>
             <result property="billName" column="billName" jdbcType="VARCHAR"/>
             <result property="billAmount" column="billAmount" jdbcType="DECIMAL"/>
             <result property="billType" column="billType" jdbcType="VARCHAR"/>

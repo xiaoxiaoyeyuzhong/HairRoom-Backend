@@ -19,6 +19,11 @@ public class BillQueryRequest extends PageRequest implements Serializable {
     private Long id;
 
     /**
+     * 支付宝交易凭证号
+     */
+    private String tradeNo;
+
+    /**
      * 账单名称
      */
     private String billName;
