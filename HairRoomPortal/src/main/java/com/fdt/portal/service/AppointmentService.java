@@ -4,6 +4,7 @@ import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
 import com.fdt.common.model.entity.Appointment;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
 
 import java.util.List;
@@ -28,4 +29,18 @@ public interface AppointmentService extends IService<Appointment> {
      * @return
      */
     Long addAppointment(AppointmentAddRequest appointmentAddRequest);
+
+    /**
+     * 根据用户id查看预约记录
+     * @param userId
+     * @return List<AppointmentVO> 预约记录
+     */
+    List<AppointmentVO> listAppointmentByUserId(Long userId);
+
+    /**
+     * 根据预约实体获取预约视图
+     * @param appointmentList 预约实体列表
+     * @return AppointmentVOList 预约视图列表
+     */
+    List<AppointmentVO> getAppointmentVOByAppointment(List<Appointment> appointmentList);
 }

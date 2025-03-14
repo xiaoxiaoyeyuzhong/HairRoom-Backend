@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class AliPay {
 
     // 订单编号
-    private Long billId;
+    private String billOutId;
 
     // 商品金额
     private BigDecimal billAmount;

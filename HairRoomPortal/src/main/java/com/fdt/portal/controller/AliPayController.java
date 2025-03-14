@@ -5,8 +5,16 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.easysdk.factory.Factory;
+import com.fdt.common.api.ErrorCode;
+import com.fdt.common.model.entity.Bill;
+import com.fdt.common.model.entity.Customer;
+import com.fdt.common.model.entity.Staff;
 import com.fdt.portal.config.AliPayConfig;
+import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.model.entity.AliPay;
+import com.fdt.portal.service.BillService;
+import com.fdt.portal.service.CustomerService;
+import com.fdt.portal.service.StaffService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +37,15 @@ public class AliPayController {
 
     @Resource
     AliPayConfig aliPayConfig;
+
+    @Resource
+    CustomerService customerService;
+
+    @Resource
+    StaffService staffService;
+
+    @Resource
+    BillService billService;
 
     private static final String GATEWAY_URL = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
     private static final String FORMAT = "JSON";
@@ -49,7 +67,7 @@ public class AliPayController {
 
         // 关于product_code，PC：FAST_INSTANT_TRADE_PAY 手机浏览器：MOBILE_WAP_PAY
         request.setBizContent("{" +
-                "\"out_trade_no\":\"" + aliPay.getBillId() + "\","
+                "\"out_trade_no\":\"" + aliPay.getBillOutId() + "\","
                 + "\"subject\":\"" + aliPay.getBillName() + "\","
                 + "\"total_amount\":\"" + aliPay.getBillAmount() + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\""
@@ -84,16 +102,70 @@ public class AliPayController {
             }
             // 支付宝签名验证
             if(Factory.Payment.Common().verifyNotify(params)) {
-                log.info("交易名称: " + params.get("subject"));
+
+                String billName = params.get("subject");
+                BigDecimal billAmount = new BigDecimal(params.get("buyer_pay_amount"));
+                String tradeNo = params.get("trade_no");
+                String outTradeNo = params.get("out_trade_no");
+
+                log.info("交易名称: " + billName);
                 log.info("交易状态: " + params.get("trade_status"));
-                log.info("支付宝交易凭证号: " + params.get("trade_no"));
-                log.info("商户订单号: " + params.get("out_trade_no"));
+                log.info("支付宝交易凭证号: " + tradeNo);
+                log.info("商户订单号: " + outTradeNo);
                 log.info("交易金额: " + params.get("total_amount"));
                 log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
                 log.info("买家付款时间: " + params.get("gmt_payment"));
-                log.info("买家付款金额: " + params.get("buyer_pay_amount"));
+                log.info("买家付款金额: " + billAmount);
+
+                //  签名认证通过，保存账单信息
+                //  拆分billOutId，获取客户的用户id和员工id,验证时间戳是否过期
+
+                // 按照 _ 切分字符串
+                String[] parts = outTradeNo.split("_");
+                Long customerUserId = Long.valueOf(parts[0]);
+                Long staffId = Long.valueOf(parts[1]);
+                Long timeStamp = Long.valueOf(parts[2]);
+
+                // 通过客户的用户id拿到客户id，验证客户是否存在
+                Long customerId = customerService.getCustomerIdByUserId(customerUserId);
+                Customer customer = customerService.getById(customerId);
+                if (customer == null){
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "客户不存在");
+                }
+
+                // 验证员工是否存在
+                Staff staff = staffService.getById(staffId);
+                if (staff == null){
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "员工不存在");
+                }
+
+                // 验证时间戳是否过期
+                if (System.currentTimeMillis() - timeStamp > 1000 * 60 * 60 * 24){
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "时间戳过期");
+                }
+
+                Bill bill = new Bill();
+                bill.setBillName(billName);
+                bill.setBillAmount(billAmount);
+                bill.setTradeNo(tradeNo);
+                bill.setCustomerId(customerId);
+                bill.setStaffId(staffId);
+                // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
+                bill.setBillType("洗剪吹");
+
+                billService.save(bill);
+                log.info("支付宝支付回调完成");
+
+            }else{
+                log.info("支付宝签名认证失败");
 
             }
+
+
+
+
+        }else{
+            log.info("订单支付失败");
         }
         return "success";
     }

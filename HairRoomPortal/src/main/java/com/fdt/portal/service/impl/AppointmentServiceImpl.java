@@ -1,19 +1,20 @@
 package com.fdt.portal.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.ErrorCode;
-import com.fdt.common.constant.UserConstant;
 import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
-import com.fdt.common.model.entity.Schedule;
-import com.fdt.common.model.entity.User;
+import com.fdt.common.model.entity.Appointment;
+import com.fdt.common.model.entity.Customer;
+import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
 import com.fdt.common.utils.DateToWeekUtil;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.mapper.AppointmentMapper;
 import com.fdt.portal.service.AppointmentService;
-import com.fdt.common.model.entity.Appointment;
+import com.fdt.portal.service.CustomerService;
 import com.fdt.portal.service.ScheduleService;
 import com.fdt.portal.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +41,9 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
     @Resource
     private UserService userService;
 
+    @Resource
+    private CustomerService customerService;
+
     @Override
     public List<ScheduleVO> canAppointmentByDay(AppointmentQueryRequest appointmentQueryRequest) {
 
@@ -63,11 +67,14 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         LocalDate appointmentDate = DateToWeekUtil.getDate(appointmentAddRequest.getAppointmentTime());
         appointment.setAppointmentTime(appointmentDate);
 
-        // 验证客户是否存在,注意验证角色
-        User customer = userService.getById(appointment.getCustomerId());
-        if (customer == null || !UserConstant.DEFAULT_ROLE.equals(customer.getUserRole())){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "客户不存在");
-        }
+        // 根据前端传递的用户id获取用户在客户表的id
+        Long customerId = customerService.getCustomerIdByUserId(appointmentAddRequest.getCustomerUserId());
+        appointment.setCustomerId(customerId);
+//        // 验证客户是否存在,注意验证角色
+//        User customer = userService.getById(appointment.getCustomerId());
+//        if (customer == null || !UserConstant.DEFAULT_ROLE.equals(customer.getUserRole())){
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR, "客户不存在");
+//        }
 
         // 验证用户要预约的时间，是否有对应的员工排班信息
         Long staffId = appointment.getStaffId();
@@ -85,6 +92,9 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
 
         ScheduleVO scheduleVO = scheduleVOList.get(0);
         Long id = scheduleVO.getId();
+
+        // todo 防止重复预约
+
         // 保存预约信息
         boolean result = this.save(appointment);
         if (!result){
@@ -95,6 +105,31 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         scheduleService.updateAppointmentInfo(id);
 
         return appointment.getId();
+    }
+
+    @Override
+    public List<AppointmentVO> listAppointmentByUserId(Long userId) {
+
+        if (userId ==null || userId == 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long customerId = customerService.getCustomerIdByUserId(userId);
+
+        QueryWrapper<Appointment> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.eq("customerId", customerId);
+        List<Appointment> appointmentList = this.list(queryWrapper);
+        return getAppointmentVOByAppointment(appointmentList);
+
+    }
+
+    @Override
+    public List<AppointmentVO> getAppointmentVOByAppointment(List<Appointment> appointmentList) {
+        return appointmentList.stream().map(appointment -> {
+            AppointmentVO appointmentVO = new AppointmentVO();
+            BeanUtils.copyProperties(appointment, appointmentVO);
+            return appointmentVO;
+        }).collect(Collectors.toList());
     }
 
 

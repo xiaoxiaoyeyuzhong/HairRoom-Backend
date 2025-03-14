@@ -4,22 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-
 /**
- * 
- * @TableName bill
+ * 客户
+ * @TableName customer
  */
-@TableName(value ="bill")
+@TableName(value ="customer")
 @Data
-public class Bill implements Serializable {
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 8974296800284574332L;
+public class Customer implements Serializable {
     /**
      * id
      */
@@ -27,40 +22,34 @@ public class Bill implements Serializable {
     private Long id;
 
     /**
-     * 支付宝交易凭证号
+     * 客户姓名
      */
-    private String tradeNo;
+    private String customerName;
 
     /**
-     * 账单名称
+     *  客户性别
      */
-    private String billName;
+    private String customerSex;
 
     /**
-     * 账单金额
-     * 若数据库存储的金额小数位数少于输入值，会进行四舍五入
+     * 客户年龄
      */
-    private BigDecimal billAmount;
+    private Long customerAge;
 
     /**
-     * 账单类型
+     * 客户手机号
      */
-    private String billType;
+    private String customerPhone;
 
     /**
-     * 账单描述
+     * 客户邮箱
      */
-    private String billDesc;
+    private String customerEmail;
 
     /**
-     *  客户id
+     * 创建用户id
      */
-    private Long CustomerId;
-
-    /**
-     * 员工id
-     */
-    private Long StaffId;
+    private Long userId;
 
     /**
      * 创建时间
@@ -76,4 +65,7 @@ public class Bill implements Serializable {
      * 是否删除
      */
     private Integer isDelete;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

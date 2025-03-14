@@ -12,6 +12,7 @@ public class DateToWeekUtil {
     // 根据字符串日期获取时间类型日期
     public static LocalDate getDate(String date) {
         // 按照 . 切分字符串
+        // 第一个\表示第二个\是普通的反斜杠，而这个反斜杠代表正则表达式的转义字符转义点号 ，表示一个普通的 .
         String[] parts = date.split("\\.");
 
         String yearPart = "";

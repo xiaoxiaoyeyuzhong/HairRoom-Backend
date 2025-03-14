@@ -24,4 +24,6 @@ public interface ScheduleService extends IService<Schedule> {
      * @return
      */
     boolean updateAppointmentInfo(Long id);
+
+
 }
