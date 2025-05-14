@@ -18,5 +18,5 @@ public class ScheduleQueryRequest {
     /**
      * 时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 }

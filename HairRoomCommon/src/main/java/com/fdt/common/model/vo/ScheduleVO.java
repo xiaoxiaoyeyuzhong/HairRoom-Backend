@@ -28,7 +28,7 @@ public class ScheduleVO {
     /**
      * 时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 
     /**
      * 已预约数
@@ -39,4 +39,14 @@ public class ScheduleVO {
      * 可预约数
      */
     private Integer appointSlots;
+
+    /**
+     * 门店名称
+     */
+    private String storeName;
+
+    /**
+     * 员工名称
+     */
+    private String staffName;
 }

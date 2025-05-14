@@ -41,7 +41,7 @@ public class Appointment implements Serializable {
     /**
      * 预约时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 
     /**
      * 创建时间

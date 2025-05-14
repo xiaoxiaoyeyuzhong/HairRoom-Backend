@@ -80,11 +80,11 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         Long staffId = appointment.getStaffId();
         DayOfWeek dayOfWeek = appointment.getAppointmentTime().getDayOfWeek();
         Integer weekDay = dayOfWeek.getValue();
-        Integer timeSlot = appointment.getTimeSlot();
+        Integer timeInterval = appointment.getTimeInterval();
         ScheduleQueryRequest scheduleQueryRequest = new ScheduleQueryRequest();
         scheduleQueryRequest.setStaffId(staffId);
         scheduleQueryRequest.setWeekDay(weekDay);
-        scheduleQueryRequest.setTimeSlot(timeSlot);
+        scheduleQueryRequest.setTimeInterval(timeInterval);
         List<ScheduleVO> scheduleVOList = scheduleService.getDay(scheduleQueryRequest);
         if (scheduleVOList.isEmpty()){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "该时段没有该员工排班信息");

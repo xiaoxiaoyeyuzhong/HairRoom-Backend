@@ -19,8 +19,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,billName,billAmount,
-        billType,billDesc,userId,
+        id,tradeNo,billName,billAmount,
+        billType,billDesc,customerId,staffId,
         createTime,updateTime,isDelete
     </sql>
 </mapper>

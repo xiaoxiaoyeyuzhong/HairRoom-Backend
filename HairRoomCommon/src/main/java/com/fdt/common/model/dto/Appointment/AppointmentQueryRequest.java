@@ -25,5 +25,5 @@ public class AppointmentQueryRequest {
     /**
      * 预约时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 }

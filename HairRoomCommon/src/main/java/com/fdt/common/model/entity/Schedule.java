@@ -39,7 +39,7 @@ public class Schedule implements Serializable {
     /**
      * 时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 
     /**
      * 已预约数

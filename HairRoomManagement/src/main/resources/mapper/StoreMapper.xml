@@ -2,22 +2,22 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fdt.portal.mapper.AppointmentMapper">
+<mapper namespace="com.fdt.management.mapper.StoreMapper">
 
-    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Appointment">
+    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Store">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="customerId" column="customerId" jdbcType="BIGINT"/>
-            <result property="staffId" column="staffId" jdbcType="BIGINT"/>
-            <result property="appointmentTime" column="appointmentTime" jdbcType="TIMESTAMP"/>
-            <result property="timeInterval" column="timeInterval" jdbcType="INTEGER"/>
+            <result property="storeName" column="storeName" jdbcType="VARCHAR"/>
+            <result property="storeAddress" column="storeAddress" jdbcType="VARCHAR"/>
+            <result property="storePhone" column="storePhone" jdbcType="VARCHAR"/>
+            <result property="storeEmail" column="storeEmail" jdbcType="VARCHAR"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,customerId,staffId,
-        appointmentTime,timeInterval,createTime,
+        id,storeName,storeAddress,
+        storePhone,storeEmail,createTime,
         updateTime,isDelete
     </sql>
 </mapper>

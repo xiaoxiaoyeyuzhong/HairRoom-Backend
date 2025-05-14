@@ -48,14 +48,14 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule>
             for(int j = 0; j < num_day; j++){
 
                 // 随机生成时间段数据
-                List<Integer> timeSlotsList = generateWorkDays.generate(num_slot,range_slot);
+                List<Integer> timeIntervalList = generateWorkDays.generate(num_slot,range_slot);
 
                 for(int k = 0; k < num_slot; k++){
                     Schedule schedule = new Schedule();
                     schedule.setStaffId(staffList.get(i).getId());
                     schedule.setStoreId(storeId);
                     schedule.setWeekDay(workDaysList.get(j));
-                    schedule.setTimeSlot(timeSlotsList.get(k));
+                    schedule.setTimeInterval(timeIntervalList.get(k));
                     schedule.setAppointSlots(autoScheduleRequest.getAppointSlots());
                     try {
                         this.save(schedule);

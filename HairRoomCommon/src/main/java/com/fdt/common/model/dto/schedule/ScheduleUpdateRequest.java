@@ -25,7 +25,7 @@ public class ScheduleUpdateRequest {
     /**
      * 时间段
      */
-    private Integer timeSlot;
+    private Integer timeInterval;
 
     /**
      * 已预约数

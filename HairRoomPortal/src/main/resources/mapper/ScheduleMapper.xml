@@ -9,7 +9,7 @@
         <result property="staffId" column="staffId" jdbcType="BIGINT"/>
         <result property="storeId" column="storeId" jdbcType="BIGINT"/>
         <result property="weekDay" column="weekDay" jdbcType="INTEGER"/>
-        <result property="timeSlot" column="timeSlot" jdbcType="INTEGER"/>
+        <result property="timeInterval" column="timeInterval" jdbcType="INTEGER"/>
         <result property="haveAppointedSlots" column="haveAppointedSlots" jdbcType="INTEGER"/>
         <result property="appointSlots" column="appointSlots" jdbcType="INTEGER"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
@@ -18,8 +18,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,staffId,storeId,
-        scheduleList,haveAppointedSlots,appointSlots,
+        id,staffId,storeId,weekDay,timeInterval,
+        haveAppointedSlots,appointSlots,
         createTime,updateTime,isDelete
     </sql>
 </mapper>
