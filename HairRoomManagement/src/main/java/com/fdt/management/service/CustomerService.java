@@ -1,7 +1,7 @@
-package com.fdt.portal.service;
+package com.fdt.management.service;
 
-import com.fdt.common.model.entity.Customer;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fdt.common.model.entity.Customer;
 
 /**
 * @author 冯德田
@@ -15,6 +15,6 @@ public interface CustomerService extends IService<Customer> {
      * @param UserId 用户id
      * @return 客户id
      */
-    Customer getCustomerByUserId(Long UserId);
+    Long getCustomerIdByUserId(Long UserId);
 
 }

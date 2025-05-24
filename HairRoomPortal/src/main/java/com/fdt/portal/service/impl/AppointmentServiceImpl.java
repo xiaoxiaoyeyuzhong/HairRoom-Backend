@@ -68,7 +68,8 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         appointment.setAppointmentTime(appointmentDate);
 
         // 根据前端传递的用户id获取用户在客户表的id
-        Long customerId = customerService.getCustomerIdByUserId(appointmentAddRequest.getCustomerUserId());
+        Customer customer = customerService.getCustomerByUserId(appointmentAddRequest.getCustomerUserId());
+        Long customerId = customer.getId();
         appointment.setCustomerId(customerId);
 //        // 验证客户是否存在,注意验证角色
 //        User customer = userService.getById(appointment.getCustomerId());
@@ -113,7 +114,8 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         if (userId ==null || userId == 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Long customerId = customerService.getCustomerIdByUserId(userId);
+        Customer customer = customerService.getCustomerByUserId(userId);
+        Long customerId = customer.getId();
 
         QueryWrapper<Appointment> queryWrapper = new QueryWrapper<>();
 

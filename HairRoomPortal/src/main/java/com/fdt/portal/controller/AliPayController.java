@@ -4,23 +4,23 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.easysdk.factory.Factory;
 import com.fdt.common.api.ErrorCode;
+import com.fdt.common.model.dto.pay.AliPay;
+import com.fdt.common.model.dto.pay.AliPayRefund;
 import com.fdt.common.model.entity.Bill;
 import com.fdt.common.model.entity.Customer;
 import com.fdt.common.model.entity.Staff;
 import com.fdt.portal.config.AliPayConfig;
 import com.fdt.portal.exception.BusinessException;
-import com.fdt.portal.model.entity.AliPay;
 import com.fdt.portal.service.BillService;
 import com.fdt.portal.service.CustomerService;
 import com.fdt.portal.service.StaffService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +67,7 @@ public class AliPayController {
 
         // 关于product_code，PC：FAST_INSTANT_TRADE_PAY 手机浏览器：MOBILE_WAP_PAY
         request.setBizContent("{" +
-                "\"out_trade_no\":\"" + aliPay.getBillOutId() + "\","
+                "\"out_trade_no\":\"" + aliPay.getOutTradeNo() + "\","
                 + "\"subject\":\"" + aliPay.getBillName() + "\","
                 + "\"total_amount\":\"" + aliPay.getBillAmount() + "\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\""
@@ -127,8 +127,7 @@ public class AliPayController {
                 Long timeStamp = Long.valueOf(parts[2]);
 
                 // 通过客户的用户id拿到客户id，验证客户是否存在
-                Long customerId = customerService.getCustomerIdByUserId(customerUserId);
-                Customer customer = customerService.getById(customerId);
+                Customer customer = customerService.getCustomerByUserId(customerUserId);
                 if (customer == null){
                     throw new BusinessException(ErrorCode.PARAMS_ERROR, "客户不存在");
                 }
@@ -144,11 +143,14 @@ public class AliPayController {
                     throw new BusinessException(ErrorCode.PARAMS_ERROR, "时间戳过期");
                 }
 
+                // todo 重要！记录订单的同时记录预约信息
+
                 Bill bill = new Bill();
                 bill.setBillName(billName);
                 bill.setBillAmount(billAmount);
                 bill.setTradeNo(tradeNo);
-                bill.setCustomerId(customerId);
+                bill.setOutTradeNo(outTradeNo);
+                bill.setCustomerId(customer.getId());
                 bill.setStaffId(staffId);
                 // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
                 bill.setBillType("洗剪吹");
@@ -158,12 +160,7 @@ public class AliPayController {
 
             }else{
                 log.info("支付宝签名认证失败");
-
             }
-
-
-
-
         }else{
             log.info("订单支付失败");
         }

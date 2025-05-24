@@ -1,4 +1,4 @@
-package com.fdt.portal.model.entity;
+package com.fdt.common.model.dto.pay;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class AliPay {
 
     // 订单编号
-    private String billOutId;
+    private String outTradeNo;
 
     // 商品金额
     private BigDecimal billAmount;

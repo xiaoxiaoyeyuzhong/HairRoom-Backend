@@ -5,21 +5,22 @@
 <mapper namespace="com.fdt.portal.mapper.BillMapper">
 
     <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Bill">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="tradeNo" column="tradeNo" jdbcType="VARCHAR"/>
-            <result property="billName" column="billName" jdbcType="VARCHAR"/>
-            <result property="billAmount" column="billAmount" jdbcType="DECIMAL"/>
-            <result property="billType" column="billType" jdbcType="VARCHAR"/>
-            <result property="billDesc" column="billDesc" jdbcType="VARCHAR"/>
-            <result property="customerId" column="customerId" jdbcType="BIGINT"/>
-            <result property="staffId" column="staffId" jdbcType="BIGINT"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
-            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="tradeNo" column="tradeNo" jdbcType="VARCHAR"/>
+        <result property="outTradeNo" column="outTradeNo" jdbcType="VARCHAR"/>
+        <result property="billName" column="billName" jdbcType="VARCHAR"/>
+        <result property="billAmount" column="billAmount" jdbcType="DECIMAL"/>
+        <result property="billType" column="billType" jdbcType="VARCHAR"/>
+        <result property="billDesc" column="billDesc" jdbcType="VARCHAR"/>
+        <result property="customerId" column="customerId" jdbcType="BIGINT"/>
+        <result property="staffId" column="staffId" jdbcType="BIGINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,tradeNo,billName,billAmount,
+        id,tradeNo,outTradeNo,billName,billAmount,
         billType,billDesc,customerId,staffId,
         createTime,updateTime,isDelete
     </sql>

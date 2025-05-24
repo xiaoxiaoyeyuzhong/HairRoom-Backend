@@ -1,5 +1,6 @@
 package com.fdt.portal.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.model.entity.Customer;
 import com.fdt.portal.service.CustomerService;
@@ -16,9 +17,10 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer>
     implements CustomerService{
 
     @Override
-    public Long getCustomerIdByUserId(Long UserId) {
-        Customer customer = this.getById(UserId);
-        return customer.getId();
+    public Customer getCustomerByUserId(Long UserId) {
+        QueryWrapper<Customer> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userId", UserId);
+        return this.getOne(queryWrapper);
     }
 }
 

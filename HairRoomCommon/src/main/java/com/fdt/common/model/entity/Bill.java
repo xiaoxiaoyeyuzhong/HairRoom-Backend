@@ -32,6 +32,11 @@ public class Bill implements Serializable {
     private String tradeNo;
 
     /**
+     * 商户订单号
+     */
+    private String outTradeNo;
+
+    /**
      * 账单名称
      */
     private String billName;
