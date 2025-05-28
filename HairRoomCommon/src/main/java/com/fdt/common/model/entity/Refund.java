@@ -11,15 +11,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 
- * @TableName bill
+ * 退款
+ * @TableName refund
  */
-@TableName(value ="bill")
+@TableName(value ="refund")
 @Data
-public class Bill implements Serializable {
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 8974296800284574332L;
+public class Refund implements Serializable {
     /**
      * id
      */
@@ -27,7 +24,7 @@ public class Bill implements Serializable {
     private Long id;
 
     /**
-     * 支付宝交易凭证号
+     * 支付宝交易号
      */
     private String tradeNo;
 
@@ -37,40 +34,24 @@ public class Bill implements Serializable {
     private String outTradeNo;
 
     /**
-     * 支付情况
+     * 退款金额
      */
-    private Integer paySituation;
+    private BigDecimal refundAmount;
 
     /**
-     * 账单名称
+     * 退款原因
      */
-    private String billName;
+    private String refundReason;
 
     /**
-     * 账单金额
-     * 若数据库存储的金额小数位数少于输入值，会进行四舍五入
+     * 退款审核情况,0-未审核，1-审核通过，2-审核不通过
      */
-    private BigDecimal billAmount;
+    private Integer auditSituation;
 
     /**
-     * 账单类型
+     * 退款情况，0-为退款，1-已退款，2-退款失败
      */
-    private String billType;
-
-    /**
-     * 账单描述
-     */
-    private String billDesc;
-
-    /**
-     *  客户id
-     */
-    private Long CustomerId;
-
-    /**
-     * 员工id
-     */
-    private Long StaffId;
+    private Integer refundSituation;
 
     /**
      * 创建时间
@@ -86,4 +67,7 @@ public class Bill implements Serializable {
      * 是否删除
      */
     private Integer isDelete;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

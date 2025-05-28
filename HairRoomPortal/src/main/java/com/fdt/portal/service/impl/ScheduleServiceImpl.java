@@ -50,7 +50,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule>
             return scheduleList.stream().map(schedule -> {
                 ScheduleVO scheduleVO = new ScheduleVO();
                 BeanUtils.copyProperties(schedule, scheduleVO);
-                // todo 根据staffId和timeInterval查询店铺名称和员工名称
+                // 根据staffId和timeInterval查询店铺名称和员工名称
                 // 记得QueryWrapper设置id而不是storeId，要和数据库保持一致。
                 QueryWrapper<Store> storeNameQueryWrapper = new QueryWrapper<>();
                 log.info("storeId:"+scheduleVO.getStoreId());
@@ -62,7 +62,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule>
                 staffNameQueryWrapper.eq("id",scheduleVO.getStaffId());
                 Staff staff = staffService.getOne(staffNameQueryWrapper);
 
-                // todo 补充需要的店铺名称和员工名称
+                // 补充需要的店铺名称和员工名称
                 scheduleVO.setStoreName(store.getStoreName());
                 scheduleVO.setStaffName(staff.getStaffName());
                 return scheduleVO;

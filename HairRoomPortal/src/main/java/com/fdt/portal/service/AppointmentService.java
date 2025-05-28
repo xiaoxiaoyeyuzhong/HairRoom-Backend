@@ -1,7 +1,7 @@
 package com.fdt.portal.service;
 
-import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
-import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
+import com.fdt.common.model.dto.appointment.AppointmentAddRequest;
+import com.fdt.common.model.dto.appointment.AppointmentQueryRequest;
 import com.fdt.common.model.entity.Appointment;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fdt.common.model.vo.AppointmentVO;

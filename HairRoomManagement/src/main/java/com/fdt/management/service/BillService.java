@@ -30,4 +30,12 @@ public interface BillService extends IService<Bill> {
      * @return Long 账单id
      */
     Long addBill(BillAddRequest billAddRequest);
+
+    /**
+     * 通过tradeNo和outTradeNo查询账单
+     * @param tradeNo 支付宝交易凭证号
+     * @param outTradeNo 商户订单号
+     * @return Bill 账单
+     */
+    Bill getByOutAndTradeNo(String tradeNo, String outTradeNo);
 }

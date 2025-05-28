@@ -72,6 +72,15 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill>
         }
         return bill.getId();
     }
+
+    @Override
+    public Bill getByOutAndTradeNo(String tradeNo, String outTradeNo) {
+
+        QueryWrapper<Bill> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("tradeNo", tradeNo);
+        queryWrapper.eq("outTradeNo", outTradeNo);
+        return this.getOne(queryWrapper);
+    }
 }
 
 

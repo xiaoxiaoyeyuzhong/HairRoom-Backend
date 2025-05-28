@@ -3,20 +3,20 @@ package com.fdt.portal.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.ErrorCode;
-import com.fdt.common.model.dto.Appointment.AppointmentAddRequest;
-import com.fdt.common.model.dto.Appointment.AppointmentQueryRequest;
+import com.fdt.common.model.dto.appointment.AppointmentAddRequest;
+import com.fdt.common.model.dto.appointment.AppointmentQueryRequest;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
 import com.fdt.common.model.entity.Appointment;
 import com.fdt.common.model.entity.Customer;
+import com.fdt.common.model.entity.Staff;
+import com.fdt.common.model.entity.Store;
 import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
 import com.fdt.common.utils.DateToWeekUtil;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.mapper.AppointmentMapper;
-import com.fdt.portal.service.AppointmentService;
-import com.fdt.portal.service.CustomerService;
-import com.fdt.portal.service.ScheduleService;
-import com.fdt.portal.service.UserService;
+import com.fdt.portal.service.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 * @createDate 2025-01-31 13:30:50
 */
 @Service
+@Log4j2
 public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appointment>
     implements AppointmentService {
 
@@ -39,10 +40,13 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
     private ScheduleService scheduleService;
 
     @Resource
-    private UserService userService;
+    private CustomerService customerService;
 
     @Resource
-    private CustomerService customerService;
+    private StaffService staffService;
+
+    @Resource
+    private StoreService storeService;
 
     @Override
     public List<ScheduleVO> canAppointmentByDay(AppointmentQueryRequest appointmentQueryRequest) {
@@ -130,6 +134,23 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         return appointmentList.stream().map(appointment -> {
             AppointmentVO appointmentVO = new AppointmentVO();
             BeanUtils.copyProperties(appointment, appointmentVO);
+
+            // 根据staffId和timeInterval查询店铺名称和员工名称
+            // 记得QueryWrapper设置id而不是storeId，要和数据库保持一致。
+            QueryWrapper<Store> storeNameQueryWrapper = new QueryWrapper<>();
+            log.info("storeId:"+appointmentVO.getStoreId());
+            storeNameQueryWrapper.eq("id",appointmentVO.getStoreId());
+            Store store = storeService.getOne(storeNameQueryWrapper);
+
+            QueryWrapper<Staff> staffNameQueryWrapper = new QueryWrapper<>();
+            log.info("staffId:"+appointmentVO.getStaffId());
+            staffNameQueryWrapper.eq("id",appointmentVO.getStaffId());
+            Staff staff = staffService.getOne(staffNameQueryWrapper);
+
+            // 补充需要的店铺名称和员工名称
+            appointmentVO.setStoreName(store.getStoreName());
+            appointmentVO.setStaffName(staff.getStaffName());
+
             return appointmentVO;
         }).collect(Collectors.toList());
     }

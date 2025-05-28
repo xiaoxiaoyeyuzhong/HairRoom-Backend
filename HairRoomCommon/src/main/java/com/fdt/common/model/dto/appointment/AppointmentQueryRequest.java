@@ -1,8 +1,6 @@
-package com.fdt.common.model.dto.Appointment;
+package com.fdt.common.model.dto.appointment;
 
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class AppointmentQueryRequest {
@@ -16,6 +14,11 @@ public class AppointmentQueryRequest {
      * 员工id
      */
     private Long staffId;
+
+    /**
+     * 门店id
+     */
+    private Long storeId;
 
     /**
      * 预约日期

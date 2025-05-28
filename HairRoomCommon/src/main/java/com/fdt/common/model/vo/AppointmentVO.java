@@ -23,6 +23,11 @@ public class AppointmentVO {
     private Long staffId;
 
     /**
+     * 门店id
+     */
+    private Long storeId;
+
+    /**
      * 预约日期
      */
     private LocalDate appointmentTime;
@@ -31,5 +36,15 @@ public class AppointmentVO {
      * 预约时间段
      */
     private Integer timeInterval;
+
+    /**
+     * 门店名称
+     */
+    private String storeName;
+
+    /**
+     * 员工名称
+     */
+    private String staffName;
 
 }

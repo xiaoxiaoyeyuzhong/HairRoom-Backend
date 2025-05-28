@@ -5,18 +5,19 @@
 <mapper namespace="com.fdt.portal.mapper.AppointmentMapper">
 
     <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Appointment">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="customerId" column="customerId" jdbcType="BIGINT"/>
-            <result property="staffId" column="staffId" jdbcType="BIGINT"/>
-            <result property="appointmentTime" column="appointmentTime" jdbcType="TIMESTAMP"/>
-            <result property="timeInterval" column="timeInterval" jdbcType="INTEGER"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
-            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="customerId" column="customerId" jdbcType="BIGINT"/>
+        <result property="staffId" column="staffId" jdbcType="BIGINT"/>
+        <result property="storeId" column="storeId" jdbcType="BIGINT"/>
+        <result property="appointmentTime" column="appointmentTime" jdbcType="TIMESTAMP"/>
+        <result property="timeInterval" column="timeInterval" jdbcType="INTEGER"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,customerId,staffId,
+        id,customerId,staffId,storeId,
         appointmentTime,timeInterval,createTime,
         updateTime,isDelete
     </sql>

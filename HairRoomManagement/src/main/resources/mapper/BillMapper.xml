@@ -8,6 +8,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="tradeNo" column="tradeNo" jdbcType="VARCHAR"/>
         <result property="outTradeNo" column="outTradeNo" jdbcType="VARCHAR"/>
+        <result property="paySituation" column="paySituation" jdbcType="INTEGER"/>
         <result property="billName" column="billName" jdbcType="VARCHAR"/>
         <result property="billAmount" column="billAmount" jdbcType="DECIMAL"/>
         <result property="billType" column="billType" jdbcType="VARCHAR"/>
@@ -20,8 +21,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,tradeNo,outTradeNo,billName,billAmount,
-        billType,billDesc,customerId,staffId,
+        id,tradeNo,outTradeNo,paySituation,billName,
+        billAmount,billType,billDesc,customerId,staffId,
         createTime,updateTime,isDelete
     </sql>
 </mapper>

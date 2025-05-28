@@ -154,6 +154,7 @@ public class AliPayController {
                 bill.setStaffId(staffId);
                 // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
                 bill.setBillType("洗剪吹");
+                bill.setPaySituation(1);
 
                 billService.save(bill);
                 log.info("支付宝支付回调完成");
