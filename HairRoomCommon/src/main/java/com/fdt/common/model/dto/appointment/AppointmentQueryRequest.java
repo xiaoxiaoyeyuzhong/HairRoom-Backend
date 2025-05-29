@@ -21,6 +21,11 @@ public class AppointmentQueryRequest {
     private Long storeId;
 
     /**
+     * 账单id
+     */
+    private Long billId;
+
+    /**
      * 预约日期
      */
     private String appointmentTime;

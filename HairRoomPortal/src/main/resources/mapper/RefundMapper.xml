@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fdt.portal.mapper.RefundMapper">
+
+    <resultMap id="BaseResultMap" type="com.fdt.common.model.entity.Refund">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="tradeNo" column="TradeNo" jdbcType="VARCHAR"/>
+        <result property="outTradeNo" column="outTradeNo" jdbcType="VARCHAR"/>
+        <result property="refundAmount" column="refundAmount" jdbcType="DECIMAL"/>
+        <result property="refundReason" column="refundReason" jdbcType="VARCHAR"/>
+        <result property="auditSituation" column="auditSituation" jdbcType="INTEGER"/>
+        <result property="refundSituation" column="refundSituation" jdbcType="INTEGER"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,TradeNo,outTradeNo,
+        refundAmount,refundReason,auditSituation,
+        refundSituation,createTime,updateTime,isDelete
+    </sql>
+</mapper>

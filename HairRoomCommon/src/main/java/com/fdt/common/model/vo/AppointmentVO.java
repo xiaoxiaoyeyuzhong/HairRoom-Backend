@@ -28,6 +28,11 @@ public class AppointmentVO {
     private Long storeId;
 
     /**
+     * 账单id
+     */
+    private Long billId;
+
+    /**
      * 预约日期
      */
     private LocalDate appointmentTime;
@@ -46,5 +51,20 @@ public class AppointmentVO {
      * 员工名称
      */
     private String staffName;
+
+    /**
+     * 支付宝交易号
+     */
+    private String tradeNo;
+
+    /**
+     * 商户订单号
+     */
+    private String outTradeNo;
+
+    /**
+     * 支付状态
+     */
+    private Integer paySituation;
 
 }

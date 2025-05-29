@@ -1,12 +1,14 @@
 package com.fdt.management.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.BaseResponse;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.api.ResultUtils;
+import com.fdt.common.constant.RefundConstant;
 import com.fdt.common.model.dto.refund.RefundQueryRequest;
 import com.fdt.common.model.dto.refund.RefundUpdateRequest;
 import com.fdt.common.model.entity.Bill;
@@ -20,31 +22,32 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
-* @author 冯德田
-* @description 针对表【refund(退款)】的数据库操作Service实现
-* @createDate 2025-05-25 23:20:08
-*/
+ * @author 冯德田
+ * @description 针对表【refund(退款)】的数据库操作Service实现
+ * @createDate 2025-05-25 23:20:08
+ */
 @Service
 public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund>
-    implements RefundService {
+        implements RefundService {
 
     @Resource
     private RefundMapper refundMapper;
 
     @Override
     public Boolean checkRefund(RefundUpdateRequest refundUpdateRequest) {
-        if(refundUpdateRequest == null){
+        if (refundUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
         Refund refund = this.getById(refundUpdateRequest.getId());
 
         // 当退款状态不是已通过时，才允许修改审核状态
-        if(refund.getRefundSituation() == 1){
+        if (refund.getRefundSituation() == 1) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "退款状态已通过，不能修改审核状态");
         }
 
@@ -77,6 +80,39 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund>
         }).collect(Collectors.toList());
         refundVOPage.setRecords(refundVOList);
         return ResultUtils.success(refundVOPage);
+    }
+
+    @Override
+    public void updateRefund(Refund refund) {
+        UpdateWrapper<Refund> updateWrapper = new UpdateWrapper<>();
+
+        String tradeNo = refund.getTradeNo();
+        String outTradeNo = refund.getOutTradeNo();
+        BigDecimal refundAmount = refund.getRefundAmount();
+        String refundReason = refund.getRefundReason();
+        Integer auditSituation = refund.getAuditSituation();
+        Integer refundSituation = refund.getRefundSituation();
+
+        updateWrapper.eq("tradeNo", tradeNo);
+        updateWrapper.eq("outTradeNo", outTradeNo);
+        if (refundAmount != null && !BigDecimal.ZERO.equals(refundAmount)) {
+            updateWrapper.set("refundAmount", refundAmount);
+        }
+        if (refundReason != null && !"".equals(refundReason)) {
+            updateWrapper.set("refundReason", refundReason);
+        }
+        if (auditSituation != null && auditSituation != 0) {
+            updateWrapper.set("auditSituation", auditSituation);
+        }
+        if (refundSituation!=null && refundSituation != 0) {
+            updateWrapper.set("refundSituation", refundSituation);
+        }
+        boolean updated = this.update(updateWrapper);
+        if (!updated) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新退款信息失败");
+        }
+
+
     }
 }
 

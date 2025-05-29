@@ -6,15 +6,13 @@ import com.fdt.common.api.ErrorCode;
 import com.fdt.common.model.dto.appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.appointment.AppointmentQueryRequest;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
-import com.fdt.common.model.entity.Appointment;
-import com.fdt.common.model.entity.Customer;
-import com.fdt.common.model.entity.Staff;
-import com.fdt.common.model.entity.Store;
+import com.fdt.common.model.entity.*;
 import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
 import com.fdt.common.utils.DateToWeekUtil;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.mapper.AppointmentMapper;
+import com.fdt.portal.mapper.BillMapper;
 import com.fdt.portal.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -27,14 +25,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
-* @author 冯德田
-* @description 针对表【appointment(预约)】的数据库操作Service实现
-* @createDate 2025-01-31 13:30:50
-*/
+ * @author 冯德田
+ * @description 针对表【appointment(预约)】的数据库操作Service实现
+ * @createDate 2025-01-31 13:30:50
+ */
 @Service
 @Log4j2
 public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appointment>
-    implements AppointmentService {
+        implements AppointmentService {
 
     @Resource
     private ScheduleService scheduleService;
@@ -47,6 +45,12 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
 
     @Resource
     private StoreService storeService;
+
+    @Resource
+    private BillService billService;
+
+    @Resource
+    private BillMapper billMapper;
 
     @Override
     public List<ScheduleVO> canAppointmentByDay(AppointmentQueryRequest appointmentQueryRequest) {
@@ -91,7 +95,7 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         scheduleQueryRequest.setWeekDay(weekDay);
         scheduleQueryRequest.setTimeInterval(timeInterval);
         List<ScheduleVO> scheduleVOList = scheduleService.getDay(scheduleQueryRequest);
-        if (scheduleVOList.isEmpty()){
+        if (scheduleVOList.isEmpty()) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "该时段没有该员工排班信息");
         }
 
@@ -100,9 +104,17 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
 
         // todo 防止重复预约
 
+        // 生成新的的账单项，设置账单的客户id和员工id，然后把账单id保存到预约信息中
+        Bill bill = new Bill();
+        bill.setCustomerId(customerId);
+        bill.setStaffId(staffId);
+        // 插入账单后要获得账单id
+        billMapper.insert(bill);
+        long billId = bill.getId();
+        appointment.setBillId(billId);
         // 保存预约信息
         boolean result = this.save(appointment);
-        if (!result){
+        if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
 
@@ -115,7 +127,7 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
     @Override
     public List<AppointmentVO> listAppointmentByUserId(Long userId) {
 
-        if (userId ==null || userId == 0) {
+        if (userId == null || userId == 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Customer customer = customerService.getCustomerByUserId(userId);
@@ -138,18 +150,34 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
             // 根据staffId和timeInterval查询店铺名称和员工名称
             // 记得QueryWrapper设置id而不是storeId，要和数据库保持一致。
             QueryWrapper<Store> storeNameQueryWrapper = new QueryWrapper<>();
-            log.info("storeId:"+appointmentVO.getStoreId());
-            storeNameQueryWrapper.eq("id",appointmentVO.getStoreId());
+            log.info("storeId:" + appointmentVO.getStoreId());
+            storeNameQueryWrapper.eq("id", appointmentVO.getStoreId());
             Store store = storeService.getOne(storeNameQueryWrapper);
 
             QueryWrapper<Staff> staffNameQueryWrapper = new QueryWrapper<>();
-            log.info("staffId:"+appointmentVO.getStaffId());
-            staffNameQueryWrapper.eq("id",appointmentVO.getStaffId());
+            log.info("staffId:" + appointmentVO.getStaffId());
+            staffNameQueryWrapper.eq("id", appointmentVO.getStaffId());
             Staff staff = staffService.getOne(staffNameQueryWrapper);
 
             // 补充需要的店铺名称和员工名称
             appointmentVO.setStoreName(store.getStoreName());
             appointmentVO.setStaffName(staff.getStaffName());
+
+
+            // 如果预约对应的账单已支付，根据账单id查询商户订单号和支付宝交易号，否则不用查询
+            if (appointmentVO.getBillId() != null && appointmentVO.getBillId() != 0) {
+                QueryWrapper<Bill> billQueryWrapper = new QueryWrapper<>();
+                billQueryWrapper.eq("id", appointmentVO.getBillId());
+                Bill bill = billService.getOne(billQueryWrapper);
+                if(bill != null && bill.getPaySituation() != 0){
+                    appointmentVO.setTradeNo(bill.getTradeNo());
+                    appointmentVO.setOutTradeNo(bill.getOutTradeNo());
+                    // 补充账单支付状态信息
+                    appointmentVO.setPaySituation(bill.getPaySituation());
+                }
+
+
+            }
 
             return appointmentVO;
         }).collect(Collectors.toList());

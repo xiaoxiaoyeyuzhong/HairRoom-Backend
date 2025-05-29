@@ -39,6 +39,11 @@ public class Appointment implements Serializable {
     private Long storeId;
 
     /**
+     * 账单id
+     */
+    private Long billId;
+
+    /**
      * 预约日期
      */
     private LocalDate appointmentTime;

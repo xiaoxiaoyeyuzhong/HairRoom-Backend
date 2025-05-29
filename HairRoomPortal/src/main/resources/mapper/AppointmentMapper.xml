@@ -9,6 +9,7 @@
         <result property="customerId" column="customerId" jdbcType="BIGINT"/>
         <result property="staffId" column="staffId" jdbcType="BIGINT"/>
         <result property="storeId" column="storeId" jdbcType="BIGINT"/>
+        <result property="billId" column="billId" jdbcType="BIGINT"/>
         <result property="appointmentTime" column="appointmentTime" jdbcType="TIMESTAMP"/>
         <result property="timeInterval" column="timeInterval" jdbcType="INTEGER"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
@@ -17,8 +18,9 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,customerId,staffId,storeId,
+        id,customerId,staffId,storeId,billId,
         appointmentTime,timeInterval,createTime,
         updateTime,isDelete
     </sql>
+
 </mapper>

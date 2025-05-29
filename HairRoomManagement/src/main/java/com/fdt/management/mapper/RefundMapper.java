@@ -16,6 +16,7 @@ public interface RefundMapper extends BaseMapper<Refund> {
     @Update("update refund set auditSituation = #{auditSituation} " +
             "where id = #{id}")
     Boolean checkRefund(Refund refund);
+
 }
 
 

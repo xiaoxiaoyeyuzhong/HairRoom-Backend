@@ -27,4 +27,10 @@ public interface RefundService extends IService<Refund> {
      * @return
      */
     BaseResponse<Page<RefundVO>> listRefundByPage(RefundQueryRequest refundQueryRequest);
+
+    /**
+     * 更新退款信息
+     * @param refund
+     */
+    void updateRefund(Refund refund);
 }

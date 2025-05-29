@@ -78,7 +78,7 @@ public class AliPayController {
 
             Bill bill = billService.getByOutAndTradeNo(aliPayRefund.getTradeNo(),aliPayRefund.getOutTradeNo());
 
-            // 新增退款情况
+            // 更新退款情况
             Refund refund = new Refund();
             refund.setTradeNo(aliPayRefund.getTradeNo());
             refund.setOutTradeNo(aliPayRefund.getOutTradeNo());
@@ -90,19 +90,19 @@ public class AliPayController {
 
                 if (bill != null) {
                     // 设置账单的支付状态为已退款
-                    bill.setPaySituation(BillConstant.BILL_PAY_STATUS_SUCCESS);
+                    bill.setPaySituation(BillConstant.BILL_PAY_STATUS_REFUNDED);
                     refund.setRefundSituation(RefundConstant.REFUND_SITUATION_SUCCESS);
                     billService.updateById(bill);
-                    refundService.save(refund);
+                    refundService.updateRefund(refund);
                     log.info("订单退款成功，订单号：{}", aliPayRefund.getOutTradeNo());
                 }
                 return ResultUtils.success("退款成功");
             } else { // 退款失败，更新数据库
                 // 设置账单的支付状态为退款失败
-                bill.setPaySituation(BillConstant.BILL_PAY_STATUS_FAILED);
+                bill.setPaySituation(BillConstant.BILL_PAY_STATUS_REFUND_FAILED);
                 refund.setRefundSituation(RefundConstant.REFUND_SITUATION_FAIL);
                 billService.updateById(bill);
-                refundService.save(refund);
+                refundService.updateRefund(refund);
                 log.error("支付宝退款失败，原因：{}", response.getSubMsg());
                 return ResultUtils.error(ErrorCode.OPERATION_ERROR,"退款失败：" + response.getSubMsg()) ;
             }

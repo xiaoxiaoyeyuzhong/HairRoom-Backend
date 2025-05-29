@@ -25,4 +25,11 @@
         billType,billDesc,customerId,staffId,
         createTime,updateTime,isDelete
     </sql>
+
+    <insert id="insert" parameterType="com.fdt.common.model.entity.Bill"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO bill (customerId, staffId)
+        VALUES (#{customerId}, #{staffId})
+    </insert>
+
 </mapper>
