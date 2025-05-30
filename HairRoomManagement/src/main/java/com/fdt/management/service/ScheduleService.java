@@ -13,4 +13,10 @@ import com.fdt.common.model.entity.Schedule;
 public interface ScheduleService extends IService<Schedule> {
 
     boolean autoSchedule(AutoScheduleRequest autoScheduleRequest);
+
+    /**
+     * 更新排班
+     * @param schedule 排班信息
+     */
+    boolean updateSchedule(Schedule schedule);
 }

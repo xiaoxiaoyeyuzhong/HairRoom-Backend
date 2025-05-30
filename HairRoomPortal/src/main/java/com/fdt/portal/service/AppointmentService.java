@@ -1,5 +1,6 @@
 package com.fdt.portal.service;
 
+import com.fdt.common.api.DeleteRequest;
 import com.fdt.common.model.dto.appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.appointment.AppointmentQueryRequest;
 import com.fdt.common.model.entity.Appointment;
@@ -43,4 +44,11 @@ public interface AppointmentService extends IService<Appointment> {
      * @return AppointmentVOList 预约视图列表
      */
     List<AppointmentVO> getAppointmentVOByAppointment(List<Appointment> appointmentList);
+
+    /**
+     * 删除预约
+     * @param deleteRequest 删除请求体
+     * @return
+     */
+    boolean cancelAppointment(DeleteRequest deleteRequest);
 }

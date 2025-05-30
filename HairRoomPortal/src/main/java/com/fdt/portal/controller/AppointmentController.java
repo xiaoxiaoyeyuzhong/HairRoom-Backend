@@ -1,6 +1,7 @@
 package com.fdt.portal.controller;
 
 import com.fdt.common.api.BaseResponse;
+import com.fdt.common.api.DeleteRequest;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.api.ResultUtils;
 import com.fdt.common.constant.UserConstant;
@@ -59,6 +60,15 @@ public class AppointmentController {
         }
         List<AppointmentVO> appointmentVOList = appointmentService.listAppointmentByUserId(userId);
         return ResultUtils.success(appointmentVOList);
+    }
+
+    @PostMapping("/cancel")
+    public BaseResponse<Boolean> cancelAppointment(@RequestBody DeleteRequest deleteRequest){
+        if(deleteRequest == null || deleteRequest.getId() <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean result = appointmentService.cancelAppointment(deleteRequest);
+        return ResultUtils.success(result);
     }
 
     @GetMapping("/test")

@@ -26,4 +26,9 @@ public interface ScheduleService extends IService<Schedule> {
     boolean updateAppointmentInfo(Long id);
 
 
+    /**
+     * 修改排班信息
+     * @param schedule 排班信息
+     */
+    boolean updateSchedule(Schedule schedule);
 }

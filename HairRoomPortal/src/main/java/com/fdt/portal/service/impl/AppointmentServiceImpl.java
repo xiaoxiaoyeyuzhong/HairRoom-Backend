@@ -2,7 +2,9 @@ package com.fdt.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fdt.common.api.DeleteRequest;
 import com.fdt.common.api.ErrorCode;
+import com.fdt.common.constant.BillConstant;
 import com.fdt.common.model.dto.appointment.AppointmentAddRequest;
 import com.fdt.common.model.dto.appointment.AppointmentQueryRequest;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
@@ -169,18 +171,65 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
                 QueryWrapper<Bill> billQueryWrapper = new QueryWrapper<>();
                 billQueryWrapper.eq("id", appointmentVO.getBillId());
                 Bill bill = billService.getOne(billQueryWrapper);
-                if(bill != null && bill.getPaySituation() != 0){
-                    appointmentVO.setTradeNo(bill.getTradeNo());
-                    appointmentVO.setOutTradeNo(bill.getOutTradeNo());
+                String tradeNo = bill.getTradeNo();
+                String outTradeNo = bill.getOutTradeNo();
+                Integer paySituation = bill.getPaySituation();
+                if(bill != null){
+                    if(paySituation != 0){
+                        appointmentVO.setTradeNo(tradeNo);
+                        appointmentVO.setOutTradeNo(outTradeNo);
+                    }
                     // 补充账单支付状态信息
                     appointmentVO.setPaySituation(bill.getPaySituation());
                 }
-
-
             }
 
             return appointmentVO;
         }).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public boolean cancelAppointment(DeleteRequest deleteRequest) {
+
+        // 验证参数
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 查询出对应的预约项
+        Appointment appointment = this.getById(deleteRequest.getId());
+
+        // 如果已经有已支付的订单，不允许删除
+        if (appointment.getBillId() != null && appointment.getBillId() != 0) {
+            Bill bill = billMapper.selectById(appointment.getBillId());
+            if (bill != null) {
+                if(bill.getPaySituation().equals(BillConstant.BILL_PAY_STATUS_WAIT)){
+                    // 删除生成的空账单
+                    billMapper.deleteById(appointment.getBillId());
+                } else if(bill.getPaySituation().equals(BillConstant.BILL_PAY_STATUS_SUCCESS)){
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR, "该预约项已支付，不允许删除");
+                }
+
+            }
+        }
+
+        if (this.removeById(deleteRequest.getId())) {
+            // todo 订单过期后不需要修改。
+            // 更新员工排班信息，修改已预约人数和可预约人数
+            Long staffId = appointment.getStaffId();
+            Integer timeInterval = appointment.getTimeInterval();
+            Integer weekDay = appointment.getAppointmentTime().getDayOfWeek().getValue();
+            QueryWrapper<Schedule> scheduleQueryWrapper = new QueryWrapper<>();
+            scheduleQueryWrapper.eq("staffId", staffId);
+            scheduleQueryWrapper.eq("timeInterval", timeInterval);
+            scheduleQueryWrapper.eq("weekDay", weekDay);
+            Schedule schedule = scheduleService.getOne(scheduleQueryWrapper);
+            schedule.setHaveAppointedSlots(schedule.getHaveAppointedSlots() - 1);
+            schedule.setAppointSlots(schedule.getAppointSlots() + 1);
+            return scheduleService.updateSchedule(schedule);
+
+        }
+        return true;
     }
 
 

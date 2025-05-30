@@ -1,6 +1,7 @@
 package com.fdt.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.model.dto.schedule.ScheduleQueryRequest;
@@ -90,6 +91,41 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule>
             }
             return result;
 
+    }
+
+    @Override
+    public boolean updateSchedule(Schedule schedule) {
+        UpdateWrapper<Schedule> updateWrapper = new UpdateWrapper<>();
+        Long id = schedule.getId();
+        Long staffId = schedule.getStaffId();
+        Long storeId = schedule.getStoreId();
+        Integer weekDay = schedule.getWeekDay();
+        Integer timeInterval = schedule.getTimeInterval();
+        Integer haveAppointedSlots = schedule.getHaveAppointedSlots();
+        Integer appointSlots = schedule.getAppointSlots();
+
+        if(id != null && id >= 0){
+            updateWrapper.eq("id", id);
+        }
+        if(staffId != null && staffId >= 0){
+            updateWrapper.eq("staffId", staffId);
+        }
+        if(weekDay != null && weekDay >= 0){
+            updateWrapper.eq("weekDay", weekDay);
+        }
+        if(timeInterval != null && timeInterval >= 0){
+            updateWrapper.eq("timeInterval", timeInterval);
+        }
+        if(storeId != null && storeId >= 0){
+            updateWrapper.set("storeId", storeId);
+        }
+        if(haveAppointedSlots != null && haveAppointedSlots >= 0){
+            updateWrapper.set("haveAppointedSlots", haveAppointedSlots);
+        }
+        if(appointSlots != null && appointSlots >= 0){
+            updateWrapper.set("appointSlots", appointSlots);
+        }
+        return this.update(updateWrapper);
     }
 
 }

@@ -4,17 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.ErrorCode;
+import com.fdt.common.constant.BillConstant;
 import com.fdt.common.model.dto.refund.RefundAddRequest;
+import com.fdt.common.model.entity.Bill;
 import com.fdt.common.model.entity.Customer;
 import com.fdt.common.model.entity.Refund;
 
 import com.fdt.common.model.entity.Staff;
 import com.fdt.portal.exception.BusinessException;
 import com.fdt.portal.mapper.RefundMapper;
-import com.fdt.portal.service.AliPayService;
-import com.fdt.portal.service.CustomerService;
-import com.fdt.portal.service.RefundService;
-import com.fdt.portal.service.StaffService;
+import com.fdt.portal.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +31,9 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund>
     @Resource
     private AliPayService aliPayService;
 
+    @Resource
+    private BillService billService;
+
 
     @Override
     public boolean addRefund(RefundAddRequest refundAddRequest) {
@@ -47,10 +49,21 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund>
         int deadline = 1000 * 60 * 60 * 24 * 7;
         aliPayService.checkOutTradeNo(outTradeNo,deadline);
 
-        // 若请求合法，则复制请求参数，创建退款对象，保存到数据库中。
+        // 若请求合法，则复制请求参数，创建退款对象，保存到数据库中;接着修改对应账单的支付情况为退款处理中。
         Refund refund = new Refund();
         BeanUtils.copyProperties(refundAddRequest, refund);
-        return this.save(refund);
+        if(!this.save(refund)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "添加退款申请失败");
+        }
+        Bill bill = new Bill();
+        bill.setTradeNo(tradeNo);
+        bill.setOutTradeNo(outTradeNo);
+        bill.setPaySituation(BillConstant.BILL_PAY_STATUS_REFUNDING);
+        if(!billService.updateBill(bill)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "修改账单支付状态失败");
+        }
+        return true;
+
     }
 
     @Override

@@ -30,4 +30,11 @@ public interface BillService extends IService<Bill> {
      * @return Long 账单id
      */
     Long addBill(BillAddRequest billAddRequest);
+
+
+    /**
+     * 修改账单
+     * @param bill
+     */
+    Boolean updateBill(Bill bill);
 }

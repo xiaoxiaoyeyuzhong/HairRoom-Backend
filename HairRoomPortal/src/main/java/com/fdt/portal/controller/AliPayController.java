@@ -5,6 +5,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.easysdk.factory.Factory;
 import com.fdt.common.api.BaseResponse;
@@ -57,17 +58,22 @@ public class AliPayController {
         AlipayClient alipayClient = new DefaultAlipayClient(GATEWAY_URL, aliPayConfig.getAppId(),
                 aliPayConfig.getAppPrivateKey(), FORMAT, CHARSET, aliPayConfig.getAlipayPublicKey(), SIGN_TYPE);
 
-        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        // 电脑端
+        // AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+
+        // 手机端
+        AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         // 设置notifyUrl和returnUrl，即回调的地址和返回的地址
         request.setNotifyUrl(aliPayConfig.getNotifyUrl());
         request.setReturnUrl(aliPayConfig.getReturnUrl());
 
-        // 关于product_code，PC：FAST_INSTANT_TRADE_PAY 手机浏览器：MOBILE_WAP_PAY
+        // 关于product_code，PC：FAST_INSTANT_TRADE_PAY 跳转到支付宝或网页：QUICK_WAP_WAY
+        String productCode = "QUICK_WAP_WAY";
         request.setBizContent("{" +
                 "\"out_trade_no\":\"" + aliPay.getOutTradeNo() + "\","
                 + "\"subject\":\"" + aliPay.getBillName() + "\","
                 + "\"total_amount\":\"" + aliPay.getBillAmount() + "\","
-                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\""
+                + "\"product_code\":\"" + productCode + "\""
                 + "}");
         // 跳转到指定页面
 //        request.setReturnUrl("");

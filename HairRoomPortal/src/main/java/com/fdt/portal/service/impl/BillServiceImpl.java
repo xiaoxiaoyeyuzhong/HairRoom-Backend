@@ -1,6 +1,7 @@
 package com.fdt.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.constant.UserConstant;
@@ -71,6 +72,58 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill>
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
         return bill.getId();
+    }
+
+    @Override
+    public Boolean updateBill(Bill bill) {
+        UpdateWrapper<Bill> updateWrapper = new UpdateWrapper<>();
+
+        Long id = bill.getId();
+        String tradeNo = bill.getTradeNo();
+        String outTradeNo = bill.getOutTradeNo();
+        Integer paySituation = bill.getPaySituation();
+        String billName = bill.getBillName();
+        BigDecimal billAmount = bill.getBillAmount();
+        String billType = bill.getBillType();
+        String billDesc = bill.getBillDesc();
+        Long CustomerId = bill.getCustomerId();
+        Long StaffId = bill.getStaffId();
+
+        if(id != null && id > 0){
+            updateWrapper.eq("id", id);
+        }
+        if(tradeNo != null && tradeNo.length() > 0){
+            updateWrapper.eq("tradeNo", tradeNo);
+        }
+        if(outTradeNo != null && outTradeNo.length() > 0){
+            updateWrapper.eq("outTradeNo", outTradeNo);
+        }
+        if(paySituation != null && paySituation > 0){
+            updateWrapper.set("paySituation", paySituation);
+        }
+        if(billName != null && billName.length() > 0){
+            updateWrapper.set("billName", billName);
+        }
+        if(billAmount != null && !BigDecimal.ZERO.equals(billAmount)){
+            updateWrapper.set("billAmount", billAmount);
+        }
+        if(billType != null && billType.length() > 0){
+            updateWrapper.set("billType", billType);
+        }
+        if(billDesc != null && billDesc.length() > 0){
+            updateWrapper.set("billDesc", billDesc);
+        }
+        if(CustomerId != null && CustomerId > 0){
+            updateWrapper.set("CustomerId", CustomerId);
+        }
+        if(StaffId != null && StaffId > 0){
+            updateWrapper.set("StaffId", StaffId);
+        }
+        boolean updated = this.update(updateWrapper);
+        if (!updated) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新账单信息失败");
+        }
+        return updated;
     }
 }
 
