@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,6 +79,15 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         LocalDate appointmentDate = DateToWeekUtil.getDate(appointmentAddRequest.getAppointmentTime());
         appointment.setAppointmentTime(appointmentDate);
 
+        //不能预约过时的日期
+         if (appointmentDate.isBefore(LocalDate.now())) {
+              throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能预约过时的日期");
+         }
+        // 不能预约过时的时间段
+        // 如果是当天预约，需要检查时间段是否可用
+        Integer timeInterval = appointment.getTimeInterval();
+        this.checkTimeInterval(appointmentDate,timeInterval);
+
         // 根据前端传递的用户id获取用户在客户表的id
         Customer customer = customerService.getCustomerByUserId(appointmentAddRequest.getCustomerUserId());
         Long customerId = customer.getId();
@@ -91,7 +102,6 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
         Long staffId = appointment.getStaffId();
         DayOfWeek dayOfWeek = appointment.getAppointmentTime().getDayOfWeek();
         Integer weekDay = dayOfWeek.getValue();
-        Integer timeInterval = appointment.getTimeInterval();
         ScheduleQueryRequest scheduleQueryRequest = new ScheduleQueryRequest();
         scheduleQueryRequest.setStaffId(staffId);
         scheduleQueryRequest.setWeekDay(weekDay);
@@ -230,6 +240,41 @@ public class AppointmentServiceImpl extends ServiceImpl<AppointmentMapper, Appoi
 
         }
         return true;
+    }
+
+    @Override
+    public void checkTimeInterval(LocalDate appointmentDate,Integer timeInterval) {
+        // 如果是当天预约，需要检查时间段是否可用
+        if (appointmentDate.isEqual(LocalDate.now())) {
+            // 获取当前时间
+            LocalTime now = LocalTime.now();
+
+            // 根据时间段设置结束时间
+            LocalTime endTime;
+            switch (timeInterval) {
+                case 1:
+                    endTime = LocalTime.of(11, 30);
+                    break;
+                case 2:
+                    endTime = LocalTime.of(17, 30);
+                    break;
+                case 3:
+                    endTime = LocalTime.of(22, 30);
+                    break;
+                default:
+                    throw new BusinessException(ErrorCode.PARAMS_ERROR, "无效的时间段");
+            }
+
+            // 检查时间规则
+            if (now.isAfter(endTime)) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "该时间段已结束，无法预约");
+            }
+
+            // 检查是否在15分钟内结束
+            if (Duration.between(now, endTime).toMinutes() < 15) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "距离该时间段结束不足15分钟，无法预约");
+            }
+        }
     }
 
 

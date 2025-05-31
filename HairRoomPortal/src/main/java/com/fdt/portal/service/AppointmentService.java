@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fdt.common.model.vo.AppointmentVO;
 import com.fdt.common.model.vo.ScheduleVO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -51,4 +52,10 @@ public interface AppointmentService extends IService<Appointment> {
      * @return
      */
     boolean cancelAppointment(DeleteRequest deleteRequest);
+
+    /**
+     * 检查时间段
+     * @param timeInterval 时间间隔
+     */
+    void checkTimeInterval(LocalDate appointmentDate, Integer timeInterval);
 }
