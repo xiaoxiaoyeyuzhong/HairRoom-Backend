@@ -1,16 +1,13 @@
 package com.fdt.portal.service.impl;
 
 import com.alipay.easysdk.factory.Factory;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fdt.common.api.ErrorCode;
 import com.fdt.common.constant.BillConstant;
-import com.fdt.common.model.entity.Bill;
-import com.fdt.common.model.entity.Customer;
-import com.fdt.common.model.entity.Staff;
+import com.fdt.common.model.entity.*;
 import com.fdt.portal.exception.BusinessException;
-import com.fdt.portal.service.AliPayService;
-import com.fdt.portal.service.BillService;
-import com.fdt.portal.service.CustomerService;
-import com.fdt.portal.service.StaffService;
+import com.fdt.portal.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -31,17 +28,23 @@ public class AliPayServiceImpl implements AliPayService {
     private StaffService staffService;
 
     @Resource
+    private AppointmentService appointmentService;
+
+    @Resource
     BillService billService;
+
+    @Resource
+    private StaffEvaluationService  staffEvaluationService;
 
     @Override
     public String payNotify(HttpServletRequest request) throws Exception {
-        Map<String,String> params = new HashMap<>();
-        Map<String,String[]> requestParams = request.getParameterMap();
-        for(String name : requestParams.keySet()){
+        Map<String, String> params = new HashMap<>();
+        Map<String, String[]> requestParams = request.getParameterMap();
+        for (String name : requestParams.keySet()) {
             params.put(name, request.getParameter(name));
         }
         // 支付宝签名验证
-        if(Factory.Payment.Common().verifyNotify(params)) {
+        if (Factory.Payment.Common().verifyNotify(params)) {
 
             String billName = params.get("subject");
             BigDecimal billAmount = new BigDecimal(params.get("buyer_pay_amount"));
@@ -60,7 +63,7 @@ public class AliPayServiceImpl implements AliPayService {
             //  签名认证通过，保存账单信息
             //  拆分billOutId，获取客户的用户id和员工id,验证时间戳是否过期
             int deadline = 1000 * 60 * 60 * 24;
-            String result = this.checkOutTradeNo(outTradeNo,deadline);
+            String result = this.checkOutTradeNo(outTradeNo, deadline);
 
             String[] parts = result.split("_");
             Long customerId = Long.valueOf(parts[0]);
@@ -79,11 +82,24 @@ public class AliPayServiceImpl implements AliPayService {
             // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
             bill.setBillType("洗剪吹");
             bill.setPaySituation(BillConstant.BILL_PAY_STATUS_SUCCESS);
-
             billService.updateById(bill);
+
+            // 支付成功后，生成空评价，关联客户id，员工id，预约id, 账单id
+            StaffEvaluation staffEvaluation = new StaffEvaluation();
+            staffEvaluation.setCustomerId(customerId);
+            staffEvaluation.setStaffId(staffId);
+             staffEvaluation.setBillId(billId);
+            QueryWrapper<Appointment> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("billId",billId);
+            Appointment appointment = appointmentService.getOne(queryWrapper);
+            if (appointment != null) {
+                staffEvaluation.setAppointmentId( appointment.getId());
+                staffEvaluationService.save(staffEvaluation);
+            }
+
             log.info("支付宝支付回调完成");
 
-        }else{
+        } else {
             log.info("支付宝签名认证失败");
         }
         return "订单支付成功";
@@ -98,23 +114,23 @@ public class AliPayServiceImpl implements AliPayService {
         Long billId = Long.valueOf(parts[2]);
         Long timeStamp = Long.valueOf(parts[3]);
         Customer customer = customerService.getCustomerByUserId(customerUserId);
-        if (customer == null){
+        if (customer == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "客户不存在");
         }
         // 验证员工是否存在
         Staff staff = staffService.getById(staffId);
-        if (staff == null){
+        if (staff == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "员工不存在");
         }
 
         // 验证账单是否存在
         Bill bill = billService.getById(billId);
-        if (bill == null){
+        if (bill == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账单不存在");
         }
 
         // 验证时间戳是否过期
-        if (System.currentTimeMillis() - timeStamp > deadline){
+        if (System.currentTimeMillis() - timeStamp > deadline) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "时间戳过期");
         }
         return customer.getId() + "_" + staffId + "_" + billId;
