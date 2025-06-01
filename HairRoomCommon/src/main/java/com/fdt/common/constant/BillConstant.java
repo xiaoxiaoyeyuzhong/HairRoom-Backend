@@ -10,5 +10,7 @@ public interface BillConstant {
     public static final Integer BILL_PAY_STATUS_REFUNDING = 3;
     public static final Integer BILL_PAY_STATUS_REFUND_FAILED = 4;
 
+    public static final Integer BILL_PAY_STATUS_FAILED = 5;
+
 
 }

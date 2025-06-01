@@ -43,44 +43,45 @@ public class AliPayServiceImpl implements AliPayService {
         for (String name : requestParams.keySet()) {
             params.put(name, request.getParameter(name));
         }
+        String billName = params.get("subject");
+        BigDecimal billAmount = new BigDecimal(params.get("buyer_pay_amount"));
+        String tradeNo = params.get("trade_no");
+        String outTradeNo = params.get("out_trade_no");
+
+        log.info("交易名称: " + billName);
+        log.info("交易状态: " + params.get("trade_status"));
+        log.info("支付宝交易凭证号: " + tradeNo);
+        log.info("商户订单号: " + outTradeNo);
+        log.info("交易金额: " + params.get("total_amount"));
+        log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
+        log.info("买家付款时间: " + params.get("gmt_payment"));
+        log.info("买家付款金额: " + billAmount);
+
+        //  签名认证通过，保存账单信息
+        //  拆分billOutId，获取客户的用户id和员工id,验证时间戳是否过期
+        int deadline = 1000 * 60 * 60 * 24;
+        String result = this.checkOutTradeNo(outTradeNo, deadline);
+
+        String[] parts = result.split("_");
+        Long customerId = Long.valueOf(parts[0]);
+        Long staffId = Long.valueOf(parts[1]);
+        Long billId = Long.valueOf(parts[2]);
+
+        // 修改对应billId的账单信息。
+        Bill bill = new Bill();
+        bill.setId(billId);
+        bill.setBillName(billName);
+        bill.setBillAmount(billAmount);
+        bill.setTradeNo(tradeNo);
+        bill.setOutTradeNo(outTradeNo);
+        bill.setCustomerId(customerId);
+        bill.setStaffId(staffId);
+        // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
+        bill.setBillType("洗剪吹");
         // 支付宝签名验证
         if (Factory.Payment.Common().verifyNotify(params)) {
 
-            String billName = params.get("subject");
-            BigDecimal billAmount = new BigDecimal(params.get("buyer_pay_amount"));
-            String tradeNo = params.get("trade_no");
-            String outTradeNo = params.get("out_trade_no");
 
-            log.info("交易名称: " + billName);
-            log.info("交易状态: " + params.get("trade_status"));
-            log.info("支付宝交易凭证号: " + tradeNo);
-            log.info("商户订单号: " + outTradeNo);
-            log.info("交易金额: " + params.get("total_amount"));
-            log.info("买家在支付宝唯一id: " + params.get("buyer_id"));
-            log.info("买家付款时间: " + params.get("gmt_payment"));
-            log.info("买家付款金额: " + billAmount);
-
-            //  签名认证通过，保存账单信息
-            //  拆分billOutId，获取客户的用户id和员工id,验证时间戳是否过期
-            int deadline = 1000 * 60 * 60 * 24;
-            String result = this.checkOutTradeNo(outTradeNo, deadline);
-
-            String[] parts = result.split("_");
-            Long customerId = Long.valueOf(parts[0]);
-            Long staffId = Long.valueOf(parts[1]);
-            Long billId = Long.valueOf(parts[2]);
-
-            // 修改对应billId的账单信息。
-            Bill bill = new Bill();
-            bill.setId(billId);
-            bill.setBillName(billName);
-            bill.setBillAmount(billAmount);
-            bill.setTradeNo(tradeNo);
-            bill.setOutTradeNo(outTradeNo);
-            bill.setCustomerId(customerId);
-            bill.setStaffId(staffId);
-            // todo 获取账单类型，替换固定的类型,可以考虑放入billOutId中
-            bill.setBillType("洗剪吹");
             bill.setPaySituation(BillConstant.BILL_PAY_STATUS_SUCCESS);
             billService.updateById(bill);
 
@@ -101,6 +102,10 @@ public class AliPayServiceImpl implements AliPayService {
 
         } else {
             log.info("支付宝签名认证失败");
+            // 如果订单 支付失败，则修改账单状态为支付失败
+            bill.setPaySituation(BillConstant.BILL_PAY_STATUS_FAILED);
+            billService.updateById(bill);
+
         }
         return "订单支付成功";
     }

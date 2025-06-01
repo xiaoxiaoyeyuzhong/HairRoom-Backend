@@ -31,4 +31,5 @@ public class ScheduleController {
         return ResultUtils.success(scheduleService.autoSchedule(autoScheduleRequest));
 
     }
+
 }
