@@ -1,71 +1,34 @@
 package com.fdt.common.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 排班
  * @TableName schedule
  */
-@TableName(value ="schedule")
 @Data
+@TableName("schedule")
 public class Schedule implements Serializable {
-    /**
-     * id
-     */
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    /**
-     * 员工id
-     */
     private Long staffId;
-
-    /**
-     * 门店id
-     */
     private Long storeId;
-
-    /**
-     * 星期几
-     */
     private Integer weekDay;
-
-    /**
-     * 时间段
-     */
     private Integer timeInterval;
-
-    /**
-     * 已预约数
-     */
     private Integer haveAppointedSlots;
-
-    /**
-     * 可预约数
-     */
     private Integer appointSlots;
 
-    /**
-     * 创建时间
-     */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
-    /**
-     * 更新时间
-     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    private Integer isDelete;
+    @TableLogic
+    private Integer isDelete;  // 逻辑删除字段
 
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

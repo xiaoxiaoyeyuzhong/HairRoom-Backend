@@ -1,4 +1,11 @@
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: update # ddl-auto:检查表结构和实体类是否匹配
+    show-sql: true # 打印sql
+    properties:
+      hibernate:
+        format_sql: true #格式化输出sql
   servlet:
     # file upload
     multipart:

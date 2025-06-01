@@ -115,6 +115,12 @@
             <version>4.39.223.ALL</version>
         </dependency>
 
+        <!-- 定时任务支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

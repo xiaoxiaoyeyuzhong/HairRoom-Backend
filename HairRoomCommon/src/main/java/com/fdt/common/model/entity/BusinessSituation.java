@@ -7,19 +7,17 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
- * 门店
- * @TableName store
+ * 营业情况
+ * @TableName business_situation
  */
-@TableName(value ="store")
+@TableName(value ="business_situation")
 @Data
-public class Store implements Serializable {
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = -5068492416614008328L;
-
+public class BusinessSituation implements Serializable {
     /**
      * id
      */
@@ -27,24 +25,29 @@ public class Store implements Serializable {
     private Long id;
 
     /**
-     * 门店名称
+     * 门店id
      */
-    private String storeName;
+    private Long storeId;
 
     /**
-     * 门店地址
+     * 营业额
      */
-    private String storeAddress;
+    private BigDecimal businessAmount;
 
     /**
-     * 门店电话
+     * 成本
      */
-    private String storePhone;
+    private BigDecimal businessCost;
 
     /**
-     * 门店邮箱
+     * 利润
      */
-    private String storeEmail;
+    private BigDecimal businessProfit;
+
+    /**
+     * 营业日期
+     */
+    private LocalDate businessDay;
 
     /**
      * 创建时间
@@ -61,4 +64,6 @@ public class Store implements Serializable {
      */
     private Integer isDelete;
 
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

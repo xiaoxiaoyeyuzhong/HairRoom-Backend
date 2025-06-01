@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,13 @@ public class AliPayServiceImpl implements AliPayService {
     BillService billService;
 
     @Resource
-    private StaffEvaluationService  staffEvaluationService;
+    private StaffEvaluationService staffEvaluationService;
+
+    @Resource
+    private BusinessSituationService businessSituationService;
+
+    @Resource
+    private StoreService storeService;
 
     @Override
     public String payNotify(HttpServletRequest request) throws Exception {
@@ -47,6 +54,7 @@ public class AliPayServiceImpl implements AliPayService {
         BigDecimal billAmount = new BigDecimal(params.get("buyer_pay_amount"));
         String tradeNo = params.get("trade_no");
         String outTradeNo = params.get("out_trade_no");
+        String stringBusinessAmount = params.get("total_amount");
 
         log.info("交易名称: " + billName);
         log.info("交易状态: " + params.get("trade_status"));
@@ -81,7 +89,6 @@ public class AliPayServiceImpl implements AliPayService {
         // 支付宝签名验证
         if (Factory.Payment.Common().verifyNotify(params)) {
 
-
             bill.setPaySituation(BillConstant.BILL_PAY_STATUS_SUCCESS);
             billService.updateById(bill);
 
@@ -89,13 +96,55 @@ public class AliPayServiceImpl implements AliPayService {
             StaffEvaluation staffEvaluation = new StaffEvaluation();
             staffEvaluation.setCustomerId(customerId);
             staffEvaluation.setStaffId(staffId);
-             staffEvaluation.setBillId(billId);
+            staffEvaluation.setBillId(billId);
             QueryWrapper<Appointment> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("billId",billId);
+            queryWrapper.eq("billId", billId);
             Appointment appointment = appointmentService.getOne(queryWrapper);
-            if (appointment != null) {
-                staffEvaluation.setAppointmentId( appointment.getId());
+            Long appointmentId = appointment.getId();
+
+            if (appointmentId >= 0) {
+                staffEvaluation.setAppointmentId(appointmentId);
                 staffEvaluationService.save(staffEvaluation);
+            }
+
+            // 修改Business_ situation表，修改营业额
+
+            // 通过staffId查询门店id
+            QueryWrapper<Staff> staffQueryWrapper = new QueryWrapper<>();
+            staffQueryWrapper.eq("id", staffId);
+            Staff staff = staffService.getOne(staffQueryWrapper);
+
+            Long storeId = staff.getStoreId();
+
+            LocalDate businessDay = appointment.getAppointmentTime();
+            // 先查询是否存在该门店营业额记录
+            QueryWrapper<BusinessSituation> businessSituationQueryWrapper = new QueryWrapper<>();
+            businessSituationQueryWrapper.eq("storeId", storeId);
+            businessSituationQueryWrapper.eq("businessDay", businessDay);
+            BusinessSituation businessSituation = businessSituationService.getOne(businessSituationQueryWrapper);
+            if (businessSituation == null) {
+                businessSituation = new BusinessSituation();
+                businessSituation.setStoreId(storeId);
+                businessSituation.setBusinessDay(businessDay);
+                BigDecimal businessAmount = new BigDecimal(stringBusinessAmount);
+                businessSituation.setBusinessAmount(businessAmount);
+                // 查看门店有多少员工
+                int staffCount = storeService.getStaffCount(storeId);
+                BigDecimal  businessCost = new BigDecimal(staffCount * 300);
+                businessSituation.setBusinessCost(businessCost);
+                businessSituation.setBusinessProfit(businessAmount.subtract(businessCost));
+                businessSituationService.save(businessSituation);
+            } else {
+                UpdateWrapper<BusinessSituation> businessSituationUpdateWrapper = new UpdateWrapper<>();
+                if (staff.getStoreId() != null && storeId >= 0) {
+                    businessSituationUpdateWrapper.eq("businessDay", businessDay);
+                    businessSituationUpdateWrapper.eq("storeId", storeId);
+                    BigDecimal businessAmount = new BigDecimal(stringBusinessAmount);
+                    BigDecimal allBusinessAmount = businessSituation.getBusinessAmount().add(businessAmount);
+                    businessSituationUpdateWrapper.set("businessAmount", allBusinessAmount);
+                    BigDecimal businessProfit = businessSituation.getBusinessProfit().add(businessAmount);
+                    businessSituationUpdateWrapper.set("businessProfit", businessProfit);
+                }
             }
 
             log.info("支付宝支付回调完成");
