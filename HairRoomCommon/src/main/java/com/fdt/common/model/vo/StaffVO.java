@@ -1,8 +1,11 @@
 package com.fdt.common.model.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 public class StaffVO implements Serializable {
 
     private static final long serialVersionUID = 7876703986053545536L;
